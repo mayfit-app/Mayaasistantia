@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI GPS — le GPS des intelligences artificielles</title>
+<meta name="description" content="Transforme un objectif en parcours d'IA : quelle IA, pour quoi faire, dans quel ordre, et comment passer le relais." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   AI GPS — DESIGN SYSTEM
+   Palette : blanc chaud / encre / or antique. Pas de violet, pas de gadget.
+   L'accent (or) est structurel : la "route", l'étape active, les CTA clés.
+   ========================================================================= */
+:root{
+  --paper:#FCFCFA;        /* fond principal, blanc à peine chaud */
+  --surface:#FFFFFF;      /* cartes */
+  --surface-2:#F6F4EE;    /* surfaces secondaires */
+  --ink:#17150F;          /* texte principal (charbon chaud, choix assumé) */
+  --ink-soft:#4A4638;     /* texte secondaire */
+  --ink-faint:#8A8676;    /* texte tertiaire */
+  --line:#E7E2D4;         /* filets */
+  --line-strong:#D8D2C0;
+  --gold:#B08D3E;         /* or antique */
+  --gold-deep:#8F6F2C;    /* or au survol */
+  --gold-tint:#F3ECD9;    /* fond or très clair */
+  --ok:#5C7A4A;
+  --warn:#C08A2E;
+  --danger:#A5442F;
+  --info:#3D5A73;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 1px 2px rgba(23,21,15,.04), 0 8px 24px rgba(23,21,15,.06);
+  --shadow-lg:0 12px 40px rgba(23,21,15,.12);
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-display:'Space Grotesk','Inter',-apple-system,'Segoe UI',sans-serif;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);color:var(--ink);background:var(--paper);
+  line-height:1.55;-webkit-font-smoothing:antialiased;font-weight:400;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.12;letter-spacing:-.01em}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--gold-tint)}
+
+/* ---------- Layout général ---------- */
+.app{min-height:100vh;display:flex;flex-direction:column}
+.container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* ---------- Top bar ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(252,252,250,.86);
+  backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{display:flex;align-items:center;gap:22px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);
+  font-weight:700;font-size:18px;letter-spacing:-.02em;cursor:pointer;flex-shrink:0}
+.brand .mark{width:26px;height:26px;display:grid;place-items:center}
+.brand .mark svg{width:26px;height:26px}
+.nav{display:flex;gap:4px;margin-left:8px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{background:none;border:none;color:var(--ink-soft);font-size:14px;font-weight:500;
+  padding:8px 12px;border-radius:8px;white-space:nowrap;transition:background .15s,color .15s}
+.nav button:hover{background:var(--surface-2);color:var(--ink)}
+.nav button.active{color:var(--ink);background:var(--gold-tint)}
+.topbar-cta{flex-shrink:0}
+
+/* ---------- Boutons ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);
+  background:var(--surface);color:var(--ink);padding:10px 16px;border-radius:10px;
+  font-size:14px;font-weight:500;transition:all .15s;line-height:1}
+.btn:hover{border-color:var(--ink);background:var(--surface-2)}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.primary:hover{background:#000}
+.btn.gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-deep);border-color:var(--gold-deep)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink-soft)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn.block{width:100%;justify-content:center}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn .ic{width:16px;height:16px;flex-shrink:0}
+
+/* ---------- Badges & pastilles ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  padding:3px 9px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink-soft);
+  background:var(--surface)}
+.badge.gold{background:var(--gold-tint);border-color:#E4D4A6;color:var(--gold-deep)}
+.badge.free{background:#EEF4EA;border-color:#CFE0C4;color:#4C6A3B}
+.badge.paid{background:#F6EEE9;border-color:#E4CDBE;color:#8A5433}
+.badge.freemium{background:#EDF1F5;border-color:#CBD9E4;color:#3D5A73}
+.badge.manual{background:var(--surface-2);border-color:var(--line-strong);color:var(--ink-soft)}
+.badge.connected{background:#EEF4EA;border-color:#CFE0C4;color:#4C6A3B}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot.todo{background:var(--line-strong)}
+.dot.progress{background:var(--gold)}
+.dot.wait{background:var(--warn)}
+.dot.done{background:var(--ok)}
+.dot.blocked{background:var(--danger)}
+
+/* ---------- Cartes ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.card.pad-lg{padding:28px}
+
+/* ---------- HERO / Accueil ---------- */
+.hero{padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--gold-deep);
+  font-weight:600;font-size:13px;margin-bottom:18px}
+.eyebrow .line{width:26px;height:1px;background:var(--gold)}
+.hero h1{font-size:52px;letter-spacing:-.025em;margin-bottom:16px}
+.hero .sub{font-size:18px;color:var(--ink-soft);max-width:44ch;margin-bottom:28px}
+.hero-input{display:flex;gap:10px;background:var(--surface);border:1px solid var(--line-strong);
+  border-radius:14px;padding:8px 8px 8px 18px;box-shadow:var(--shadow);max-width:520px}
+.hero-input input{flex:1;border:none;outline:none;font-size:16px;font-family:inherit;background:none;color:var(--ink)}
+.hero-input input::placeholder{color:var(--ink-faint)}
+.hero-hint{margin-top:14px;font-size:13.5px;color:var(--ink-faint)}
+.hero-hint b{color:var(--ink-soft);font-weight:600;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+.hero-hint b:hover{text-decoration-color:var(--gold)}
+
+/* Illustration "route" (le coeur visuel du produit) */
+.route-viz{background:linear-gradient(180deg,#fff, #FBFAF4);border:1px solid var(--line);
+  border-radius:20px;padding:30px 26px;box-shadow:var(--shadow)}
+.route-viz .rv-title{font-size:12.5px;color:var(--ink-faint);font-weight:600;margin-bottom:22px}
+.route-node{display:flex;align-items:center;gap:14px;position:relative;padding-bottom:20px}
+.route-node:last-child{padding-bottom:0}
+.route-node .rn-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:var(--surface);border:1px solid var(--line-strong);flex-shrink:0;font-weight:700;
+  font-family:var(--font-display);color:var(--ink)}
+.route-node.active .rn-ico{background:var(--ink);color:#fff;border-color:var(--ink)}
+.route-node.goal .rn-ico{background:var(--gold);color:#fff;border-color:var(--gold)}
+.route-node .rn-body .rn-k{font-size:12px;color:var(--ink-faint);font-weight:600}
+.route-node .rn-body .rn-v{font-size:15px;font-weight:600;font-family:var(--font-display)}
+.route-node::before{content:"";position:absolute;left:21px;top:44px;bottom:-1px;width:2px;
+  background:repeating-linear-gradient(var(--gold) 0 5px,transparent 5px 10px);opacity:.55}
+.route-node:last-child::before{display:none}
+
+/* ---------- Modes d'entrée ---------- */
+.section{padding:44px 0}
+.section-head{margin-bottom:24px}
+.section-head h2{font-size:26px;margin-bottom:6px}
+.section-head p{color:var(--ink-soft);font-size:15px}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.mode{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;text-align:left;transition:border-color .15s,transform .15s,box-shadow .15s;cursor:pointer}
+.mode:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mode .m-ico{width:38px;height:38px;border-radius:10px;background:var(--gold-tint);
+  display:grid;place-items:center;margin-bottom:14px;color:var(--gold-deep)}
+.mode h3{font-size:16px;margin-bottom:5px}
+.mode p{font-size:13.5px;color:var(--ink-soft)}
+
+/* ---------- Grille catégories ---------- */
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.cat{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 10px;
+  font-size:13px;font-weight:500;text-align:center;transition:all .15s;cursor:pointer;color:var(--ink-soft)}
+.cat:hover{border-color:var(--gold);color:var(--ink);background:var(--gold-tint)}
+
+/* ---------- Questionnaire ---------- */
+.quiz-wrap{max-width:640px;margin:0 auto;padding:40px 0 60px}
+.quiz-progress{height:4px;background:var(--line);border-radius:99px;margin-bottom:34px;overflow:hidden}
+.quiz-progress .bar{height:100%;background:var(--gold);border-radius:99px;transition:width .4s ease}
+.quiz-step-num{font-size:13px;color:var(--gold-deep);font-weight:600;margin-bottom:10px}
+.quiz h2{font-size:28px;margin-bottom:8px}
+.quiz .q-help{color:var(--ink-soft);font-size:15px;margin-bottom:26px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;border:1px solid var(--line-strong);background:var(--surface);
+  border-radius:12px;padding:15px 18px;text-align:left;font-size:15.5px;font-weight:500;transition:all .15s;cursor:pointer}
+.opt:hover{border-color:var(--gold);background:var(--gold-tint)}
+.opt.selected{border-color:var(--ink);background:var(--ink);color:#fff}
+.opt .o-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line-strong);flex-shrink:0;
+  display:grid;place-items:center;transition:all .15s}
+.opt.selected .o-check{background:#fff;border-color:#fff}
+.opt.multi .o-check{border-radius:6px}
+.opt .o-sub{font-size:12.5px;color:var(--ink-faint);font-weight:400;margin-top:2px}
+.opt.selected .o-sub{color:rgba(255,255,255,.7)}
+.quiz-nav{display:flex;justify-content:space-between;margin-top:30px;gap:12px}
+.freeform textarea{width:100%;min-height:120px;border:1px solid var(--line-strong);border-radius:12px;
+  padding:16px;font-family:inherit;font-size:15px;resize:vertical;color:var(--ink)}
+.freeform textarea:focus{outline:none;border-color:var(--gold)}
+
+/* ---------- Parcours recommandé ---------- */
+.plan-wrap{max-width:760px;margin:0 auto;padding:36px 0 60px}
+.plan-head{text-align:center;margin-bottom:32px}
+.plan-head h2{font-size:30px;margin-bottom:8px}
+.plan-head p{color:var(--ink-soft)}
+.plan-step{display:flex;gap:18px;padding:20px 0;border-top:1px solid var(--line)}
+.plan-step:first-of-type{border-top:none}
+.plan-idx{width:40px;height:40px;border-radius:11px;background:var(--surface-2);border:1px solid var(--line-strong);
+  display:grid;place-items:center;font-family:var(--font-display);font-weight:700;flex-shrink:0}
+.plan-body{flex:1;min-width:0}
+.plan-body .ps-obj{font-size:16.5px;font-weight:600;font-family:var(--font-display);margin-bottom:3px}
+.plan-body .ps-need{font-size:13px;color:var(--ink-faint);margin-bottom:12px}
+.ai-pick{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px}
+.ai-logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:700;
+  font-family:var(--font-display);font-size:14px;color:#fff;flex-shrink:0}
+.ai-pick .ap-name{font-weight:600;font-size:15px}
+.ai-pick .ap-why{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.ai-pick .ap-score{margin-left:auto;text-align:right;flex-shrink:0}
+.ap-score .sc{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--gold-deep)}
+.ap-score .scl{font-size:10.5px;color:var(--ink-faint);font-weight:600}
+.alts{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.alt-chip{font-size:12px;border:1px solid var(--line-strong);border-radius:99px;padding:5px 11px;
+  background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:all .15s}
+.alt-chip:hover{border-color:var(--gold);color:var(--ink)}
+.alt-chip .k{color:var(--ink-faint);font-weight:600}
+
+/* ---------- Cockpit ---------- */
+.cockpit{padding:26px 0 70px}
+.cockpit-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.cockpit-top h2{font-size:24px}
+.cockpit-top .ct-meta{font-size:13.5px;color:var(--ink-soft);margin-top:4px}
+.route-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:26px}
+.track-step{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;
+  cursor:pointer;transition:all .15s;position:relative}
+.track-step:hover{border-color:var(--gold)}
+.track-step.current{border-color:var(--ink);box-shadow:0 0 0 3px var(--gold-tint)}
+.track-step .ts-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.track-step .ts-n{font-family:var(--font-display);font-weight:700;font-size:12px;color:var(--ink-faint)}
+.track-step .ts-status{margin-left:auto;font-size:11px;font-weight:600;color:var(--ink-soft)}
+.track-step .ts-ai{font-weight:600;font-size:14px;font-family:var(--font-display)}
+.track-step .ts-obj{font-size:12px;color:var(--ink-soft);margin-top:2px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Mobile stepper */
+.m-stepper{display:none;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;margin-bottom:18px}
+.m-stepper .ms-count{font-family:var(--font-display);font-weight:700;font-size:14px}
+.m-stepper .ms-bar{flex:1;height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+.m-stepper .ms-bar i{display:block;height:100%;background:var(--gold)}
+
+/* ---------- Carte de mission ---------- */
+.mission{display:grid;grid-template-columns:1fr 300px;gap:22px}
+.mission-main{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.mission-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.mission-head .mh-obj{font-size:21px;font-family:var(--font-display);font-weight:600}
+.mission-ai{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;margin:16px 0}
+.field{margin:18px 0}
+.field .f-label{font-size:12px;font-weight:700;color:var(--gold-deep);margin-bottom:7px;letter-spacing:.01em}
+.field .f-body{font-size:14.5px;color:var(--ink);line-height:1.6}
+.field ul{margin:0;padding-left:18px}
+.field li{margin:3px 0;font-size:14px;color:var(--ink-soft)}
+.prompt-box{position:relative;background:#1B1810;border:1px solid #2A261A;border-radius:12px;
+  padding:16px 16px;color:#EDE7D6;font-size:13.5px;line-height:1.6;white-space:pre-wrap;
+  font-family:var(--font-body);max-height:280px;overflow:auto}
+.prompt-box .copy-btn{position:absolute;top:10px;right:10px}
+.mission-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.mission-side{display:flex;flex-direction:column;gap:16px}
+.side-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.side-card h4{font-size:13px;color:var(--ink-faint);font-weight:600;margin-bottom:12px}
+.status-list{display:flex;flex-direction:column;gap:9px}
+.status-row{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink-soft)}
+.result-input{width:100%;min-height:90px;border:1px solid var(--line-strong);border-radius:10px;padding:12px;
+  font-family:inherit;font-size:14px;resize:vertical;color:var(--ink)}
+.result-input:focus{outline:none;border-color:var(--gold)}
+.mem-item{font-size:13px;color:var(--ink-soft);padding:7px 0;border-bottom:1px solid var(--line)}
+.mem-item:last-child{border:none}
+
+/* ---------- Modal ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(23,21,15,.42);backdrop-filter:blur(3px);z-index:100;
+  display:flex;align-items:flex-start;justify-content:center;padding:40px 18px;overflow:auto}
+.modal{background:var(--surface);border-radius:18px;max-width:620px;width:100%;box-shadow:var(--shadow-lg);
+  border:1px solid var(--line);overflow:hidden;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(8px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}
+.modal-head h3{font-size:18px}
+.modal-body{padding:24px;max-height:70vh;overflow:auto}
+.modal-x{border:none;background:var(--surface-2);width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink-soft)}
+.modal-x:hover{background:var(--line)}
+.relay-block{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.relay-block .rb-k{font-size:11.5px;font-weight:700;color:var(--gold-deep);margin-bottom:5px}
+.relay-block .rb-v{font-size:13.5px;color:var(--ink);white-space:pre-wrap}
+.relay-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+
+/* ---------- Explorer / bibliothèque ---------- */
+.explore-top{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;background:var(--surface);
+  border:1px solid var(--line-strong);border-radius:10px;padding:9px 14px}
+.search input{border:none;outline:none;flex:1;font-family:inherit;font-size:14.5px;background:none;color:var(--ink)}
+.filters{display:flex;gap:7px;flex-wrap:wrap}
+.filter{font-size:12.5px;border:1px solid var(--line-strong);border-radius:99px;padding:6px 13px;
+  background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:all .15s}
+.filter.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ai-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.ai-card:hover{border-color:var(--gold);box-shadow:var(--shadow);transform:translateY(-2px)}
+.ai-card-head{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.ai-card h3{font-size:16px}
+.ai-card .ac-cat{font-size:12px;color:var(--ink-faint)}
+.ai-card .ac-desc{font-size:13px;color:var(--ink-soft);margin-bottom:12px;flex:1}
+.ai-card-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stars{color:var(--gold);font-size:13px;letter-spacing:1px}
+
+/* ---------- Fiche IA ---------- */
+.sheet-hero{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.sheet-box{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px}
+.sheet-box .sb-k{font-size:11.5px;font-weight:700;color:var(--ink-faint);margin-bottom:6px}
+.sheet-box .sb-v{font-size:13.5px;color:var(--ink)}
+.pill-list{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12px;background:var(--gold-tint);border:1px solid #E4D4A6;color:var(--gold-deep);
+  padding:3px 10px;border-radius:99px}
+.pill.neg{background:#F6EEE9;border-color:#E4CDBE;color:#8A5433}
+
+/* ---------- Comparateur ---------- */
+.cmp-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.cmp-table th,.cmp-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.cmp-table th{font-family:var(--font-display);font-weight:600;background:var(--surface-2)}
+.cmp-table td:first-child{color:var(--ink-soft);font-weight:500}
+
+/* ---------- Projets ---------- */
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.proj-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+  display:flex;flex-direction:column;gap:12px}
+.proj-card h3{font-size:17px}
+.proj-meta{display:flex;gap:8px;font-size:12.5px;color:var(--ink-faint);flex-wrap:wrap}
+.mini-bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+.mini-bar i{display:block;height:100%;background:var(--gold)}
+.proj-actions{display:flex;gap:8px;margin-top:auto}
+
+/* ---------- Écran final ---------- */
+.final-wrap{max-width:640px;margin:0 auto;padding:56px 0;text-align:center}
+.final-badge{width:76px;height:76px;border-radius:50%;background:var(--gold-tint);border:2px solid var(--gold);
+  display:grid;place-items:center;margin:0 auto 22px;color:var(--gold-deep)}
+.final-wrap h2{font-size:34px;margin-bottom:10px}
+.recap{text-align:left;margin:28px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.recap-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.recap-box .rk{font-size:12px;color:var(--ink-faint);font-weight:600}
+.recap-box .rv{font-size:20px;font-family:var(--font-display);font-weight:700;margin-top:3px}
+
+/* ---------- Empty / apprendre ---------- */
+.empty{text-align:center;padding:56px 20px;color:var(--ink-soft)}
+.empty svg{color:var(--line-strong);margin-bottom:16px}
+.learn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.learn-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.learn-card h3{font-size:16px;margin-bottom:7px}
+.learn-card p{font-size:13.5px;color:var(--ink-soft)}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;
+  box-shadow:var(--shadow-lg);z-index:200;opacity:0;transition:all .25s;display:flex;align-items:center;gap:9px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- Footer ---------- */
+.footer{border-top:1px solid var(--line);padding:26px 0;margin-top:auto;color:var(--ink-faint);font-size:13px}
+.footer-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.honesty{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft)}
+
+/* ---------- Bannière honnêteté ---------- */
+.hb{display:flex;align-items:center;gap:10px;background:var(--gold-tint);border:1px solid #E4D4A6;
+  border-radius:12px;padding:11px 16px;font-size:13px;color:var(--gold-deep);margin-bottom:22px}
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .route-viz{order:-1}
+  .hero h1{font-size:40px}
+  .modes{grid-template-columns:repeat(2,1fr)}
+  .cats{grid-template-columns:repeat(3,1fr)}
+  .ai-grid,.proj-grid,.learn-grid{grid-template-columns:1fr 1fr}
+  .mission{grid-template-columns:1fr}
+  .mission-side{flex-direction:row;flex-wrap:wrap}
+  .side-card{flex:1;min-width:220px}
+  .sheet-grid,.recap{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .container{padding:0 16px}
+  .hero{padding:44px 0 24px}
+  .hero h1{font-size:32px}
+  .section{padding:32px 0}
+  .modes,.cats,.ai-grid,.proj-grid,.learn-grid{grid-template-columns:1fr}
+  .route-track{display:none}          /* desktop cockpit route caché */
+  .m-stepper{display:flex}            /* stepper mobile visible */
+  .track-step.m-show{display:block}
+  .cockpit .route-track.m-list{display:block}
+  .nav{display:none}
+  .brand span.full{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================================
+   AI GPS — LOGIQUE APPLICATIVE (V1, sans API réelle)
+   -------------------------------------------------------------------------
+   Sections :
+     1. DONNÉES      → catalogue IA + mapping besoins + templates de workflow
+     2. MOTEUR       → recommandation par règles + construction de parcours + relay pack
+     3. STORE        → persistance localStorage (projets, favoris, préférences)
+     4. UI           → routeur + rendu des vues + composants (modal, toast)
+   HONNÊTETÉ V1 : aucune IA n'est appelée, aucune API. Tous les relais sont
+   MANUELS ou ASSISTÉS (copier/coller préparé). Le mode "connecté" est V2.
+   ========================================================================= */
+
+/* ============================ 1. DONNÉES ============================ */
+/* Données volontairement séparées de l'UI : modifiables sans toucher au rendu.
+   'confidence' + 'lastVerified' assumés : les capacités des IA évoluent vite. */
+
+const AI_TOOLS = [
+  { id:'chatgpt', name:'ChatGPT', color:'#10A37F', cat:'Texte', specialties:['Réflexion','Structuration','Rédaction','Cahier des charges'],
+    needs:['texte','idee','audit','recherche','marketing'], pricing:'freemium', quality:5, speed:5, ease:5, privacy:2,
+    inputs:['texte','image','fichier'], outputs:['texte','image'], level:'Débutant', api:true, url:'https://chat.openai.com',
+    strengths:['Polyvalent','Excellent pour clarifier et structurer','Grande communauté'],
+    weaknesses:['Données envoyées au cloud','Peut halluciner sur des faits pointus'],
+    lastVerified:'2026-01', confidence:'élevée' },
+  { id:'claude', name:'Claude', color:'#C96442', specialties:['Raisonnement','Code','Contexte long','Analyse de documents'],
+    cat:'Texte', needs:['texte','code','idee','audit'], pricing:'freemium', quality:5, speed:4, ease:5, privacy:3,
+    inputs:['texte','image','fichier'], outputs:['texte','code'], level:'Débutant', api:true, url:'https://claude.ai',
+    strengths:['Très bon en code et en analyse','Gère de longs documents','Ton nuancé'],
+    weaknesses:['Pas de génération d\u2019image','Disponibilité géographique variable'],
+    lastVerified:'2026-01', confidence:'élevée' },
+  { id:'gemini', name:'Gemini', color:'#4285F4', specialties:['Multimodal','Recherche','Intégration Google'],
+    cat:'Texte', needs:['texte','recherche','idee','data'], pricing:'freemium', quality:4, speed:5, ease:4, privacy:2,
+    inputs:['texte','image','fichier'], outputs:['texte','image'], level:'Intermédiaire', api:true, url:'https://gemini.google.com',
+    strengths:['Fort en multimodal','Bien intégré à l\u2019écosystème Google'],
+    weaknesses:['Qualité variable selon les tâches'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'perplexity', name:'Perplexity', color:'#20808D', specialties:['Recherche sourcée','Veille','Synthèse'],
+    cat:'Recherche', needs:['recherche'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:3,
+    inputs:['texte'], outputs:['texte'], level:'Débutant', api:true, url:'https://perplexity.ai',
+    strengths:['Réponses sourcées','Idéal pour vérifier / documenter'],
+    weaknesses:['Moins bon pour la création de contenu long'], lastVerified:'2026-01', confidence:'élevée' },
+  { id:'copilot', name:'Microsoft Copilot', color:'#0A6DBE', specialties:['Productivité','Office','Assistance'],
+    cat:'Productivité', needs:['texte','data'], pricing:'freemium', quality:4, speed:4, ease:5, privacy:3,
+    inputs:['texte','fichier'], outputs:['texte'], level:'Débutant', api:false, url:'https://copilot.microsoft.com',
+    strengths:['Intégré à Windows / Office'], weaknesses:['Moins flexible que les modèles bruts'],
+    lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'midjourney', name:'Midjourney', color:'#4A4A4A', specialties:['Image haute qualité','Direction artistique'],
+    cat:'Image', needs:['image'], pricing:'paid', quality:5, speed:4, ease:3, privacy:2,
+    inputs:['texte','image'], outputs:['image'], level:'Intermédiaire', api:false, url:'https://midjourney.com',
+    strengths:['Qualité esthétique au sommet','Rendu très cohérent'],
+    weaknesses:['Payant uniquement','Contrôle précis plus difficile'], lastVerified:'2026-01', confidence:'élevée' },
+  { id:'dalle', name:'DALL·E', color:'#10A37F', specialties:['Image','Génération intégrée à ChatGPT'],
+    cat:'Image', needs:['image'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:2,
+    inputs:['texte'], outputs:['image'], level:'Débutant', api:true, url:'https://chat.openai.com',
+    strengths:['Simple d\u2019accès via ChatGPT','Bon suivi des consignes'],
+    weaknesses:['Moins "artistique" que Midjourney'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'sd', name:'Stable Diffusion', color:'#111111', specialties:['Image open-source','Local & privé'],
+    cat:'Image', needs:['image'], pricing:'free', quality:4, speed:3, ease:2, privacy:5,
+    inputs:['texte','image'], outputs:['image'], level:'Avancé', api:true, url:'https://stability.ai',
+    strengths:['Gratuit / open-source','Peut tourner en local (confidentialité)'],
+    weaknesses:['Installation technique','Résultats moins "prêts à l\u2019emploi"'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'leonardo', name:'Leonardo AI', color:'#7A6FF0', specialties:['Assets de jeu','Personnages','Illustration'],
+    cat:'Image', needs:['image'], pricing:'freemium', quality:4, speed:4, ease:4, privacy:2,
+    inputs:['texte','image'], outputs:['image'], level:'Intermédiaire', api:true, url:'https://leonardo.ai',
+    strengths:['Excellent pour assets et personnages (ex. Kawaii)','Crédits gratuits'],
+    weaknesses:['Style parfois inégal'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'ideogram', name:'Ideogram', color:'#111111', specialties:['Image avec texte lisible','Logos'],
+    cat:'Image', needs:['image'], pricing:'freemium', quality:4, speed:4, ease:5, privacy:2,
+    inputs:['texte'], outputs:['image'], level:'Débutant', api:false, url:'https://ideogram.ai',
+    strengths:['Gère bien le texte dans l\u2019image','Bon pour logos / affiches'],
+    weaknesses:['Moins polyvalent'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'runway', name:'Runway', color:'#111111', specialties:['Vidéo génération & montage'],
+    cat:'Vidéo', needs:['video'], pricing:'freemium', quality:4, speed:3, ease:3, privacy:2,
+    inputs:['texte','image','video'], outputs:['video'], level:'Intermédiaire', api:true, url:'https://runwayml.com',
+    strengths:['Génération + outils de montage','Écosystème mûr'],
+    weaknesses:['Crédits limités en gratuit'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'kling', name:'Kling', color:'#1F6FEB', specialties:['Vidéo à partir d\u2019image','Animation'],
+    cat:'Vidéo', needs:['video'], pricing:'freemium', quality:4, speed:3, ease:4, privacy:2,
+    inputs:['texte','image'], outputs:['video'], level:'Intermédiaire', api:false, url:'https://klingai.com',
+    strengths:['Bon rapport qualité / accessibilité','Animation d\u2019images (ex. personnages)'],
+    weaknesses:['File d\u2019attente possible'], lastVerified:'2026-01', confidence:'faible' },
+  { id:'elevenlabs', name:'ElevenLabs', color:'#111111', specialties:['Voix off','Doublage','Audio'],
+    cat:'Audio', needs:['audio'], pricing:'freemium', quality:5, speed:5, ease:5, privacy:3,
+    inputs:['texte','audio'], outputs:['audio'], level:'Débutant', api:true, url:'https://elevenlabs.io',
+    strengths:['Voix très naturelles','Multilingue'], weaknesses:['Quota gratuit limité'],
+    lastVerified:'2026-01', confidence:'élevée' },
+  { id:'suno', name:'Suno', color:'#111111', specialties:['Musique','Chansons génératives'],
+    cat:'Audio', needs:['audio'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:2,
+    inputs:['texte'], outputs:['audio'], level:'Débutant', api:false, url:'https://suno.com',
+    strengths:['Crée des morceaux complets','Très simple'], weaknesses:['Contrôle fin limité'],
+    lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'v0', name:'v0 (Vercel)', color:'#111111', specialties:['UI / front-end','Génération d\u2019interfaces'],
+    cat:'Code', needs:['code'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:2,
+    inputs:['texte','image'], outputs:['code'], level:'Intermédiaire', api:false, url:'https://v0.dev',
+    strengths:['Génère des interfaces React propres','Rapide pour prototyper'],
+    weaknesses:['Centré front-end'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'cursor', name:'Cursor', color:'#111111', specialties:['IDE IA','Code assisté'],
+    cat:'Code', needs:['code'], pricing:'freemium', quality:5, speed:4, ease:4, privacy:3,
+    inputs:['texte','code'], outputs:['code'], level:'Avancé', api:false, url:'https://cursor.com',
+    strengths:['Édition de code dans un vrai IDE','Comprend un projet entier'],
+    weaknesses:['Nécessite d\u2019installer un logiciel'], lastVerified:'2026-01', confidence:'élevée' },
+  { id:'lovable', name:'Lovable', color:'#FF6B6B', specialties:['App builder','Du prompt à l\u2019app'],
+    cat:'Code', needs:['code'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:2,
+    inputs:['texte'], outputs:['code'], level:'Débutant', api:false, url:'https://lovable.dev',
+    strengths:['Construit une app complète depuis une description','Aucun setup'],
+    weaknesses:['Moins de contrôle bas niveau'], lastVerified:'2026-01', confidence:'moyenne' },
+  { id:'gamma', name:'Gamma', color:'#7A5CFF', specialties:['Présentations','One-pagers'],
+    cat:'Présentation', needs:['presentation'], pricing:'freemium', quality:4, speed:5, ease:5, privacy:3,
+    inputs:['texte'], outputs:['presentation'], level:'Débutant', api:false, url:'https://gamma.app',
+    strengths:['Slides propres en quelques secondes','Très simple'],
+    weaknesses:['Personnalisation avancée limitée'], lastVerified:'2026-01', confidence:'moyenne' }
+];
+
+/* Traduction "besoin exprimé" → type de besoin technique */
+const NEED_MAP = {
+  idee:{label:'Clarifier & structurer l\u2019idée', cat:'Texte'},
+  texte:{label:'Rédiger / structurer du texte', cat:'Texte'},
+  code:{label:'Développer / coder', cat:'Code'},
+  image:{label:'Créer des images / visuels', cat:'Image'},
+  video:{label:'Créer / animer une vidéo', cat:'Vidéo'},
+  audio:{label:'Créer de la voix / du son', cat:'Audio'},
+  data:{label:'Analyser des données', cat:'Data'},
+  recherche:{label:'Rechercher & vérifier', cat:'Recherche'},
+  presentation:{label:'Créer une présentation', cat:'Présentation'},
+  marketing:{label:'Concevoir du contenu marketing', cat:'Marketing'},
+  audit:{label:'Auditer / améliorer', cat:'Texte'}
+};
+
+const PRIORITIES = [
+  {id:'quality', label:'La meilleure qualité', axis:'quality'},
+  {id:'fast', label:'Aller le plus vite', axis:'speed'},
+  {id:'free', label:'Dépenser le moins possible', axis:'free'},
+  {id:'privacy', label:'Garder mes données privées', axis:'privacy'},
+  {id:'easy', label:'Le plus simple à utiliser', axis:'ease'},
+  {id:'balance', label:'Le meilleur compromis', axis:'balance'}
+];
+
+/* Templates de workflow. Chaque étape = "carte de mission".
+   {need} pilote la recommandation d'IA ; {prompt} est préparé pour l'utilisateur. */
+const WORKFLOW_TEMPLATES = {
+  kawaii:{ label:'Créer mon application de personnages Kawaii', icon:'star', steps:[
+    { need:'idee', obj:'Définir l\u2019idée et le concept', why:'Une étape de clarification évite de coder dans le vide : on transforme l\u2019envie en concept précis.',
+      inputs:['Ton idée en une phrase','Public visé'], expected:'Concept clair, ton, ambiance, différenciation',
+      prompt:'Tu es product manager. Aide-moi à transformer cette idée en concept précis : « une application de personnages animaux Kawaii animés ». Pose-moi les bonnes questions, puis propose : le concept, le public cible, l\u2019ambiance visuelle, et 3 fonctionnalités phares.',
+      validation:['Concept compréhensible en une phrase','Public cible identifié','Ambiance visuelle définie'] },
+    { need:'idee', obj:'Rédiger le cahier des charges', why:'Le cahier des charges est le document que toutes les IA suivantes vont réutiliser via le relais.',
+      inputs:['Concept validé (étape 1)'], expected:'Cahier des charges exploitable : fonctionnalités, écrans, contraintes',
+      prompt:'À partir de ce concept [COLLER LE RÉSULTAT DE L\u2019ÉTAPE 1], rédige un cahier des charges exploitable : liste des écrans, fonctionnalités par écran, parcours utilisateur, contraintes techniques (app mobile web / PWA), et une liste d\u2019assets graphiques nécessaires.',
+      validation:['Écrans listés','Fonctionnalités par écran','Liste des assets graphiques'] },
+    { need:'code', obj:'Développer la base de l\u2019application', why:'Un modèle orienté code construit la structure à partir du cahier des charges.',
+      inputs:['Cahier des charges (étape 2)'], expected:'Structure de l\u2019app + code de base',
+      prompt:'Construis la base de cette application à partir de ce cahier des charges [COLLER L\u2019ÉTAPE 2]. Utilise une PWA HTML/CSS/JS simple. Prévois des emplacements pour les personnages Kawaii (assets image) et pour leurs animations. Indique-moi clairement quels assets graphiques il te manque.',
+      validation:['Structure de l\u2019app en place','Emplacements d\u2019assets prévus','Liste des visuels manquants'] },
+    { need:'image', obj:'Créer les personnages Kawaii', why:'Le développement a signalé qu\u2019il manque des visuels : on active donc une étape image.',
+      inputs:['Liste des visuels manquants (étape 3)'], expected:'Jeu de personnages cohérents (PNG transparents)',
+      prompt:'Génère une série de personnages animaux Kawaii cohérents entre eux : style mignon, contours doux, palette pastel. Fond transparent. Pour chaque animal : pose neutre + une pose expressive. Liste demandée : chat, renard, lapin, panda.',
+      validation:['Style cohérent entre personnages','Fonds transparents','Expressions exploitables'] },
+    { need:'video', obj:'Animer les personnages', why:'On transforme les images fixes en animations : besoin détecté = IMAGE → ANIMATION.',
+      inputs:['Personnages (étape 4)'], expected:'Courtes animations par personnage',
+      prompt:'À partir de ces personnages Kawaii [IMPORTER LES IMAGES], crée de courtes animations en boucle (idle, salut, saut). Format léger adapté à une app web.',
+      validation:['Boucles fluides','Poids compatible web','Style préservé'] },
+    { need:'code', obj:'Intégrer les assets dans l\u2019app', why:'On réinjecte visuels + animations dans le code produit à l\u2019étape 3.',
+      inputs:['Code (étape 3)','Assets animés (étape 5)'], expected:'App fonctionnelle avec personnages animés',
+      prompt:'Intègre ces assets animés [IMPORTER] dans l\u2019application [COLLER L\u2019ÉTAPE 3]. Gère le chargement, l\u2019affichage responsive et les interactions de base sur les personnages.',
+      validation:['Animations affichées','Responsive OK','Aucune régression sur l\u2019existant'] },
+    { need:'audit', obj:'Auditer l\u2019UX et chercher les bugs', why:'Un regard "audit" détecte incohérences et améliorations avant la version finale.',
+      inputs:['App intégrée (étape 6)'], expected:'Liste priorisée de corrections',
+      prompt:'Audite cette application [DÉCRIRE / COLLER LE CODE] : cohérence UX, bugs potentiels, accessibilité, et 5 améliorations priorisées. Ne casse aucune fonctionnalité existante dans tes suggestions.',
+      validation:['Bugs identifiés','Améliorations priorisées','Pas de régression proposée'] },
+    { need:'code', obj:'Finaliser la version', why:'On applique les corrections validées pour obtenir le produit final.',
+      inputs:['Audit (étape 7)'], expected:'Version finale prête à déployer',
+      prompt:'Applique ces corrections validées [COLLER L\u2019ÉTAPE 7] à l\u2019application. Livre une version finale propre, commentée, et prête à déployer sur un hébergement statique.',
+      validation:['Corrections appliquées','Code propre & commenté','Prêt au déploiement'] }
+  ]},
+  application:{ label:'Créer une application', icon:'app', steps:[
+    { need:'idee', obj:'Cadrer l\u2019idée', why:'Clarifier le besoin avant de coder.', inputs:['Idée de départ'], expected:'Concept + fonctionnalités clés',
+      prompt:'Aide-moi à cadrer cette idée d\u2019application : [DÉCRIRE]. Pose les bonnes questions puis propose concept, cible et fonctionnalités clés.', validation:['Concept clair','Fonctionnalités listées'] },
+    { need:'idee', obj:'Cahier des charges', why:'Document réutilisé par les étapes suivantes.', inputs:['Concept (étape 1)'], expected:'Spécifications exploitables',
+      prompt:'Rédige un cahier des charges exploitable à partir de : [COLLER ÉTAPE 1]. Écrans, fonctionnalités, contraintes.', validation:['Écrans + fonctionnalités','Contraintes identifiées'] },
+    { need:'code', obj:'Développer', why:'Construction à partir des specs.', inputs:['Cahier des charges'], expected:'Application fonctionnelle',
+      prompt:'Développe l\u2019application à partir de : [COLLER ÉTAPE 2]. Signale les assets ou données manquants.', validation:['App fonctionnelle','Manques signalés'] },
+    { need:'audit', obj:'Tester & auditer', why:'Détecter bugs et améliorations.', inputs:['App'], expected:'Corrections priorisées',
+      prompt:'Audite l\u2019app [COLLER/DÉCRIRE] : bugs, UX, 5 améliorations priorisées, sans régression.', validation:['Bugs identifiés','Améliorations priorisées'] }
+  ]},
+  site:{ label:'Créer un site web', icon:'web', steps:[
+    { need:'idee', obj:'Brief & objectifs', why:'Poser objectifs, cible et message.', inputs:['But du site'], expected:'Brief clair',
+      prompt:'Aide-moi à écrire le brief de ce site : [DÉCRIRE]. Objectifs, cible, pages, message principal.', validation:['Objectifs clairs','Pages listées'] },
+    { need:'texte', obj:'Contenu & arborescence', why:'Structure + textes.', inputs:['Brief'], expected:'Plan + textes',
+      prompt:'À partir de ce brief [COLLER], propose l\u2019arborescence des pages et rédige les textes de chaque section.', validation:['Arborescence','Textes rédigés'] },
+    { need:'code', obj:'Design & intégration', why:'Générer l\u2019interface.', inputs:['Contenu'], expected:'Site intégré',
+      prompt:'Crée l\u2019interface de ce site à partir de [COLLER]. Design propre, responsive, moderne.', validation:['Responsive','Design cohérent'] },
+    { need:'recherche', obj:'SEO & vérification', why:'Optimiser la visibilité.', inputs:['Site'], expected:'Recommandations SEO',
+      prompt:'Analyse le SEO de ce contenu [COLLER] : mots-clés, balises, améliorations concrètes.', validation:['Mots-clés','Actions SEO'] }
+  ]},
+  image:{ label:'Créer une image', icon:'image', steps:[
+    { need:'idee', obj:'Brief créatif', why:'Cadrer le style avant de générer.', inputs:['Sujet'], expected:'Brief + prompt visuel',
+      prompt:'Aide-moi à écrire un brief créatif pour cette image : [DÉCRIRE]. Style, ambiance, format, puis un prompt de génération détaillé.', validation:['Style défini','Prompt prêt'] },
+    { need:'image', obj:'Génération', why:'Produire les visuels.', inputs:['Prompt visuel'], expected:'Plusieurs variantes',
+      prompt:'[COLLER LE PROMPT VISUEL]. Génère 4 variantes.', validation:['Variantes générées','Style respecté'] },
+    { need:'image', obj:'Sélection & retouche', why:'Affiner le meilleur résultat.', inputs:['Variantes'], expected:'Image finale',
+      prompt:'Améliore cette image [IMPORTER] : nettoyage, cadrage, cohérence. Exporte en haute résolution.', validation:['Qualité finale','Format export'] }
+  ]},
+  video:{ label:'Créer une vidéo', icon:'video', steps:[
+    { need:'idee', obj:'Concept & script', why:'Une vidéo commence par un script.', inputs:['Sujet'], expected:'Script + storyboard',
+      prompt:'Écris le concept et le script de cette vidéo : [DÉCRIRE]. Découpe en plans (storyboard).', validation:['Script','Découpage en plans'] },
+    { need:'image', obj:'Visuels / plans', why:'Créer les images sources.', inputs:['Storyboard'], expected:'Images par plan',
+      prompt:'Génère les visuels de chaque plan à partir du storyboard [COLLER].', validation:['Un visuel par plan'] },
+    { need:'video', obj:'Génération vidéo', why:'Animer les plans.', inputs:['Images'], expected:'Séquences vidéo',
+      prompt:'Anime ces plans [IMPORTER] en courtes séquences fidèles au script.', validation:['Séquences cohérentes'] },
+    { need:'audio', obj:'Voix & musique', why:'Ajouter la bande son.', inputs:['Script'], expected:'Voix off + musique',
+      prompt:'Crée la voix off de ce script [COLLER] + une musique d\u2019ambiance adaptée.', validation:['Voix naturelle','Musique adaptée'] }
+  ]},
+  presentation:{ label:'Créer une présentation', icon:'deck', steps:[
+    { need:'idee', obj:'Objectif & structure', why:'Structurer avant de mettre en forme.', inputs:['Sujet'], expected:'Plan des slides',
+      prompt:'Structure une présentation sur : [DÉCRIRE]. Objectif, audience, plan slide par slide.', validation:['Plan clair','Message par slide'] },
+    { need:'texte', obj:'Contenu des slides', why:'Rédiger le contenu.', inputs:['Plan'], expected:'Contenu rédigé',
+      prompt:'Rédige le contenu de chaque slide à partir de ce plan [COLLER]. Concis et percutant.', validation:['Contenu concis'] },
+    { need:'presentation', obj:'Mise en forme', why:'Générer le design des slides.', inputs:['Contenu'], expected:'Présentation finale',
+      prompt:'Crée une présentation à partir de ce contenu [COLLER]. Design pro et cohérent.', validation:['Design cohérent','Export possible'] }
+  ]},
+  data:{ label:'Analyser un document / des données', icon:'data', steps:[
+    { need:'data', obj:'Nettoyage & lecture', why:'Comprendre la donnée avant d\u2019analyser.', inputs:['Fichier'], expected:'Données propres + résumé',
+      prompt:'Analyse ce fichier [IMPORTER] : structure, qualité des données, résumé, points d\u2019attention.', validation:['Résumé clair','Anomalies détectées'] },
+    { need:'data', obj:'Analyse & insights', why:'Extraire du sens.', inputs:['Données propres'], expected:'Insights + visualisations',
+      prompt:'À partir de ces données [COLLER/IMPORTER], produis 5 insights clés et propose des graphiques pertinents.', validation:['Insights pertinents','Graphiques proposés'] },
+    { need:'texte', obj:'Interprétation & synthèse', why:'Rendre l\u2019analyse actionnable.', inputs:['Insights'], expected:'Synthèse décisionnelle',
+      prompt:'Rédige une synthèse décisionnelle de ces insights [COLLER] : constats, recommandations, prochaines actions.', validation:['Recommandations actionnables'] }
+  ]},
+  recherche:{ label:'Faire une recherche', icon:'search', steps:[
+    { need:'recherche', obj:'Recherche sourcée', why:'Obtenir des faits vérifiables.', inputs:['Question'], expected:'Réponses + sources',
+      prompt:'Recherche des informations fiables et sourcées sur : [DÉCRIRE]. Donne les sources.', validation:['Sources citées'] },
+    { need:'texte', obj:'Synthèse', why:'Transformer la recherche en document.', inputs:['Résultats'], expected:'Synthèse structurée',
+      prompt:'Synthétise ces résultats [COLLER] en un document clair et structuré.', validation:['Structure claire'] },
+    { need:'audit', obj:'Vérification croisée', why:'Contrôler la fiabilité.', inputs:['Synthèse'], expected:'Points à confirmer',
+      prompt:'Vérifie cette synthèse [COLLER] : incohérences, affirmations à confirmer, angles manquants.', validation:['Points de vigilance identifiés'] }
+  ]},
+  marketing:{ label:'Créer une campagne marketing', icon:'mkt', steps:[
+    { need:'idee', obj:'Cible & stratégie', why:'Définir à qui et pourquoi on parle.', inputs:['Produit / objectif'], expected:'Cible + angle',
+      prompt:'Définis la cible et la stratégie pour : [DÉCRIRE]. Persona, angle, canaux.', validation:['Persona','Angle clair'] },
+    { need:'texte', obj:'Contenu & accroches', why:'Écrire les messages.', inputs:['Stratégie'], expected:'Textes & accroches',
+      prompt:'Écris les accroches et contenus à partir de cette stratégie [COLLER]. Plusieurs variantes.', validation:['Variantes','Ton adapté'] },
+    { need:'image', obj:'Visuels', why:'Créer les supports visuels.', inputs:['Contenu'], expected:'Visuels de campagne',
+      prompt:'Crée les visuels de campagne cohérents avec ces messages [COLLER].', validation:['Cohérence visuelle'] }
+  ]},
+  automatisation:{ label:'Automatiser une tâche', icon:'auto', steps:[
+    { need:'idee', obj:'Cartographier le processus', why:'Comprendre le flux avant d\u2019automatiser.', inputs:['Tâche'], expected:'Processus décrit',
+      prompt:'Aide-moi à cartographier ce processus à automatiser : [DÉCRIRE]. Étapes, entrées, sorties, points de décision.', validation:['Étapes claires'] },
+    { need:'code', obj:'Concevoir l\u2019automatisation', why:'Traduire en workflow / script.', inputs:['Processus'], expected:'Workflow ou script',
+      prompt:'Conçois une automatisation pour ce processus [COLLER] : outils recommandés, logique, script si utile.', validation:['Logique complète','Outils identifiés'] },
+    { need:'audit', obj:'Tester', why:'Fiabiliser avant mise en prod.', inputs:['Automatisation'], expected:'Cas de test + corrections',
+      prompt:'Propose des cas de test pour cette automatisation [COLLER] et identifie les risques de régression.', validation:['Cas de test','Risques listés'] }
+  ]}
+};
+
+/* Mapping "que veux-tu créer ?" (questionnaire) → clé de template */
+const GOAL_TO_TEMPLATE = {
+  'Application':'application','Site web':'site','Image':'image','Vidéo':'video',
+  'Présentation':'presentation','Analyse de données':'data','Recherche':'recherche',
+  'Marketing':'marketing','Automatisation':'automatisation','Autre':'application'
+};
+
+/* ============================ 2. MOTEUR ============================ */
+
+/* Score de correspondance IA ↔ besoin ↔ profil utilisateur.
+   NB : présenté comme "score de correspondance", pas comme une vérité absolue. */
+function scoreTool(tool, needType, priorityAxis, owned){
+  if(!tool.needs.includes(needType)) return -1;
+  let base = (tool.quality + tool.ease + tool.speed) / 3; // 1..5
+  let bonus = 0;
+  switch(priorityAxis){
+    case 'quality': bonus = tool.quality*1.4; break;
+    case 'speed': bonus = tool.speed*1.4; break;
+    case 'ease': bonus = tool.ease*1.4; break;
+    case 'privacy': bonus = tool.privacy*1.6; break;
+    case 'free': bonus = (tool.pricing==='free'?5:tool.pricing==='freemium'?3:0)*1.4; break;
+    default: bonus = (tool.quality+tool.speed+tool.ease+tool.privacy)/4*1.2; // balance
+  }
+  // "Ne jamais recommander de changer d'outil sans raison" : bonus si déjà maîtrisé
+  if(owned && owned.includes(tool.id)) bonus += 2.2;
+  return base*2 + bonus;
+}
+
+function recommendForNeed(needType, priorityAxis, owned){
+  const scored = AI_TOOLS
+    .map(t=>({tool:t, s:scoreTool(t,needType,priorityAxis,owned)}))
+    .filter(x=>x.s>=0)
+    .sort((a,b)=>b.s-a.s);
+  if(!scored.length) return null;
+  const best = scored[0];
+  const maxS = best.s;
+  const pct = Math.min(98, Math.round(72 + (best.s/ (maxS+6))*24)); // score de correspondance lissé
+  // Alternatives par axe
+  const byAxis = axis => AI_TOOLS.filter(t=>t.needs.includes(needType))
+      .sort((a,b)=>scoreTool(b,needType,axis,owned)-scoreTool(a,needType,axis,owned))[0];
+  const alts = {
+    'Économique': AI_TOOLS.filter(t=>t.needs.includes(needType)).sort((a,b)=>
+        (a.pricing==='free'?0:a.pricing==='freemium'?1:2)-(b.pricing==='free'?0:b.pricing==='freemium'?1:2)||b.quality-a.quality)[0],
+    'Rapide': byAxis('speed'),
+    'Simple': byAxis('ease'),
+    'Privé': byAxis('privacy'),
+    'Avancé': AI_TOOLS.filter(t=>t.needs.includes(needType)).sort((a,b)=>b.quality-a.quality)[0]
+  };
+  return { best:best.tool, score:pct, alts };
+}
+
+/* Construit le parcours : template + affectation d'IA par étape selon le profil */
+function buildWorkflow(templateKey, profile){
+  const tpl = WORKFLOW_TEMPLATES[templateKey] || WORKFLOW_TEMPLATES.application;
+  const axis = (PRIORITIES.find(p=>p.id===profile.priority)||{}).axis || 'balance';
+  return {
+    templateKey, label:tpl.label,
+    steps: tpl.steps.map((st,i)=>{
+      const rec = recommendForNeed(st.need, axis, profile.owned) || {};
+      return {
+        idx:i, ...st,
+        aiId: rec.best ? rec.best.id : null,
+        score: rec.score || null,
+        alts: rec.alts ? Object.fromEntries(Object.entries(rec.alts).map(([k,v])=>[k, v?v.id:null])) : {},
+        status: i===0 ? 'progress' : 'todo',
+        result: ''
+      };
+    })
+  };
+}
+
+/* Relay Pack "assisté" : rassemble tout ce que l'IA suivante doit recevoir.
+   → évite de tout réexpliquer à chaque étape (mémoire de projet incluse). */
+function buildRelayPack(project, stepIndex){
+  const wf = project.workflow;
+  const step = wf.steps[stepIndex];
+  const prev = wf.steps.slice(0, stepIndex).filter(s=>s.result);
+  const nextAi = tool(step.aiId);
+  return {
+    goal: project.name,
+    stepObjective: step.obj,
+    context: `Objectif global : ${project.name}.\nÉtape en cours : ${step.obj} (${stepIndex+1}/${wf.steps.length}).`,
+    decisions: project.memory.length ? project.memory.map(d=>'• '+d).join('\n') : '—',
+    previousResults: prev.length ? prev.map((s,i)=>`[Étape ${s.idx+1} — ${s.obj}]\n${s.result}`).join('\n\n') : '—',
+    prompt: step.prompt,
+    expected: step.expected,
+    validation: step.validation.map(v=>'• '+v).join('\n'),
+    nextAi: nextAi ? nextAi.name : '—'
+  };
+}
+
+const tool = id => AI_TOOLS.find(t=>t.id===id);
+
+/* ============================ 3. STORE ============================ */
+const STORE = {
+  key:'aigps_v1',
+  data:{ projects:[], favorites:[], prefs:{owned:[], level:'Débutant'} },
+  load(){ try{ const raw=localStorage.getItem(this.key); if(raw) this.data=JSON.parse(raw); }catch(e){} },
+  save(){ try{ localStorage.setItem(this.key, JSON.stringify(this.data)); }catch(e){} },
+  upsertProject(p){ const i=this.data.projects.findIndex(x=>x.id===p.id);
+    if(i>=0) this.data.projects[i]=p; else this.data.projects.unshift(p); this.save(); },
+  getProject(id){ return this.data.projects.find(p=>p.id===id); },
+  deleteProject(id){ this.data.projects=this.data.projects.filter(p=>p.id!==id); this.save(); },
+  toggleFav(id){ const i=this.data.favorites.indexOf(id);
+    if(i>=0) this.data.favorites.splice(i,1); else this.data.favorites.push(id); this.save(); },
+  isFav(id){ return this.data.favorites.includes(id); }
+};
+STORE.load();
+
+const uid = () => 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+/* ============================ 3bis. CONNECTEUR IA (V2) ============================
+   AIProvider.execute() = seul point qui parle à une IA réelle. En V1, il n'existait pas
+   (tout était manuel). Ici il appelle une fonction serverless Netlify qui, elle seule,
+   détient la clé API (jamais dans le front — cf. règle §61). Si la fonction n'est pas
+   déployée / pas de clé → on échoue proprement et l'app reste en mode MANUEL.
+   Même schéma que ton ai-router.js de M@Y. */
+const AIProvider = {
+  connected: false, // passe à true dès qu'un appel réel réussit dans la session
+  async execute({need, prompt, context, lang}){
+    const res = await fetch('/.netlify/functions/execute', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ need, prompt, context, lang: lang||LANG })
+    });
+    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.error||('HTTP '+res.status)); }
+    const data = await res.json();
+    this.connected = true;
+    return data.text || '';
+  }
+};
+
+/* Exécute réellement l'étape en cours via l'IA connectée, remplit le résultat et le sauvegarde.
+   En cas d'échec (mode connecté non configuré) → message clair, on reste en manuel, zéro régression. */
+async function runStep(id, i){
+  const p = STORE.getProject(id); const step = p.workflow.steps[i];
+  const btn = document.getElementById('runBtn');
+  if(btn){ btn.disabled=true; btn.dataset.lbl=btn.innerHTML; btn.innerHTML = LANG==='en'?'Running…':'Exécution…'; }
+  try{
+    const prev = p.workflow.steps.slice(0,i).filter(s=>s.result)
+      .map(s=>`[${s.obj}]\n${s.result}`).join('\n\n');
+    const ctx = `Objectif global : ${p.name}.\n`
+      + (p.memory.length?('Décisions : '+p.memory.join(' ; ')+'.\n'):'')
+      + (prev?('Résultats précédents :\n'+prev):'');
+    const text = await AIProvider.execute({ need:step.need, prompt:step.prompt, context:ctx, lang:LANG });
+    step.result = text; if(step.status==='todo') step.status='progress';
+    p.updatedAt=Date.now(); STORE.upsertProject(p);
+    render(); toast(LANG==='en'?'Result generated by the AI':'Résultat généré par l\u2019IA');
+  }catch(err){
+    if(btn){ btn.disabled=false; btn.innerHTML=btn.dataset.lbl; }
+    openModal(`<div class="modal"><div class="modal-head"><h3>${LANG==='en'?'Connected mode not ready':'Mode connecté non configuré'}</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body"><div class="hb">${ICONS.help} ${LANG==='en'?'The app stays in manual mode — nothing is broken.':'L\u2019app reste en mode manuel — rien n\u2019est cassé.'}</div>
+      <p style="color:var(--ink-soft)">${LANG==='en'?'To run steps for real, deploy the serverless function and add your API key on Netlify:':'Pour exécuter les étapes pour de vrai, déploie la fonction serverless et ajoute ta clé API sur Netlify :'}</p>
+      <ol style="margin:12px 0 0 18px;color:var(--ink-soft);font-size:14px;line-height:1.8">
+        <li>${LANG==='en'?'Add':'Ajoute'} <code>netlify/functions/execute.js</code></li>
+        <li>Netlify → Site configuration → Environment variables → <code>ANTHROPIC_API_KEY</code></li>
+        <li>${LANG==='en'?'Redeploy, then click « Run with AI » again.':'Redéploie, puis reclique « Exécuter avec l\u2019IA ».'}</li>
+      </ol>
+      <p style="color:var(--ink-faint);font-size:12.5px;margin-top:12px">Détail : ${esc(err.message)}</p></div></div>`);
+  }
+}
+
+/* ---------- i18n FR/EN (ossature ; appliquée après le rendu, 0 régression sur le FR) ---------- */
+let LANG = localStorage.getItem('aigps_lang') || 'fr';
+function setLang(l){ LANG=l; localStorage.setItem('aigps_lang',l); render(); }
+/* Dictionnaire FR→EN de l'interface. Ce qui n'est pas traduit reste en français
+   (dégradation gracieuse). Les textes utilisateur (résultats, noms de projets) ne sont
+   jamais dans ce dico → ils sont préservés tels quels. */
+const DICT = {
+  "AI GPS":"AI GPS","Nouveau projet":"New project","Accueil":"Home","Mes projets":"My projects",
+  "Explorer les IA":"Explore AIs","Comparateur":"Compare","Favoris":"Favorites","Apprendre":"Learn",
+  "Le GPS des intelligences artificielles":"The GPS for AI tools",
+  "Que veux-tu accomplir ?":"What do you want to achieve?",
+  "Décris ton objectif. Je construis le meilleur parcours entre les IA : laquelle utiliser, pour quoi faire, dans quel ordre, et comment passer le résultat de l’une à l’autre.":"Describe your goal. I build the best route across AI tools: which one to use, for what, in what order, and how to hand the result from one to the next.",
+  "Tracer le parcours":"Build the route",
+  "Par où veux-tu commencer ?":"Where do you want to start?",
+  "Quatre façons d’entrer. Le cœur reste le même : de ton objectif jusqu’au résultat.":"Four ways in. The core stays the same: from your goal to the result.",
+  "Par objectif":"By goal","Par catégorie":"By category","Je ne sais pas":"I don't know","Reprendre un projet":"Resume a project",
+  "Explorer par catégorie":"Explore by category","Un point d’entrée rapide vers les bons outils.":"A quick entry point to the right tools.",
+  "Voici ton parcours recommandé":"Here is your recommended route",
+  "Lancer ce parcours":"Start this route","Ajuster mes réponses":"Adjust my answers","correspondance":"match",
+  "Continuer":"Continue","Précédent":"Previous","Annuler":"Cancel","Voir mon parcours":"See my route",
+  "Que veux-tu créer ?":"What do you want to create?","On part de ton besoin, pas du nom d’une IA.":"We start from your need, not from an AI's name.",
+  "Quel type d’application ?":"What kind of app?","Quel est ton niveau avec les IA ?":"What's your level with AI?",
+  "Ça ajuste le niveau d’accompagnement.":"This adjusts how much guidance you get.",
+  "Ta priorité principale ?":"Your main priority?",
+  "Une IA n’est pas \"meilleure\" dans l’absolu — mais meilleure pour toi, ici.":"No AI is \"best\" in absolute terms — only best for you, here.",
+  "Utilises-tu déjà certains outils ?":"Do you already use some tools?",
+  "Je ne te ferai pas changer d’outil sans raison.":"I won't make you switch tools without a reason.",
+  "Ou décris ton besoin librement":"Or describe your need freely",
+  "Carte de mission · étape":"Mission card · step","Changer":"Switch",
+  "Ce dont l’IA a besoin (entrées)":"What the AI needs (inputs)","Prompt préparé":"Prepared prompt",
+  "Copier":"Copy","Résultat attendu":"Expected result","Colle ici le résultat obtenu":"Paste the result you got here",
+  "Enregistrer le résultat":"Save result","Copier le prompt":"Copy prompt","Passer le relais":"Hand off",
+  "Étape précédente":"Previous step","Valider & étape suivante":"Approve & next step","Terminer le projet":"Finish project",
+  "Exécuter avec l’IA":"Run with AI","Où en suis-je ?":"Where am I?","Critères de validation":"Validation criteria",
+  "Résultat insuffisant · recommencer":"Not good enough · retry","Mémoire du projet":"Project memory",
+  "Ajouter une décision…":"Add a decision…","Mode simulation":"Simulation mode","Projets":"Projects",
+  "Objectif atteint 🎉":"Goal achieved 🎉","Étapes réalisées":"Steps completed","IA mobilisées":"AIs used","Parcours":"Route",
+  "Revoir le projet":"Review project","Dupliquer":"Duplicate","Exporter (.json)":"Export (.json)",
+  "Rechercher une IA…":"Search an AI…","Toutes":"All","Retour au catalogue":"Back to catalog",
+  "Comparer avec une autre IA":"Compare with another AI","Ajouter":"Add","Favori":"Favorite",
+  "Forces":"Strengths","Limites":"Limitations","Formats acceptés":"Accepted formats","Formats générés":"Generated formats",
+  "Qualité":"Quality","Facilité":"Ease","Rapidité":"Speed","Confidentialité":"Privacy",
+  "Dans quels parcours cette IA est-elle pertinente ?":"In which routes is this AI relevant?",
+  "Comparateur d’IA":"AI comparator","+ Ajouter une IA":"+ Add an AI","− Retirer":"− Remove",
+  "Critère":"Criterion","Catégorie":"Category","Prix":"Price","API":"API","Entrées":"Inputs","Sorties":"Outputs","Niveau":"Level",
+  "Mes favoris":"My favorites","Les IA que tu veux garder sous la main.":"The AIs you want to keep handy.",
+  "Reprendre":"Resume","Revoir":"Review","Supprimer":"Delete","En cours":"In progress","Terminé":"Done",
+  "Apprendre à utiliser les IA":"Learn to use AI",
+  "Copier tout":"Copy all","Copier les résultats":"Copy results","Télécharger (.json)":"Download (.json)",
+  "Relais manuel & assisté":"Manual & assisted hand-off",
+  "V1 sans API — aucune IA n’est appelée automatiquement.":"No API — no AI is called automatically.",
+  "AI GPS · le GPS des intelligences artificielles":"AI GPS · the GPS for AI tools",
+  "Gratuit":"Free","Freemium":"Freemium","Payant":"Paid","Actuelle":"Current","Choisir":"Choose"
+};
+function applyI18n(){
+  if(LANG!=='en') return;
+  const root=document.getElementById('app'); if(!root) return;
+  const walk=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); const nodes=[]; let n;
+  while(n=walk.nextNode()) nodes.push(n);
+  nodes.forEach(node=>{
+    const raw=node.nodeValue; if(!raw||!raw.trim()) return;
+    const lead=raw.match(/^\s*/)[0], trail=raw.match(/\s*$/)[0];
+    const norm=raw.trim().replace(/\u00a0/g,' ');
+    if(DICT[norm]!==undefined) node.nodeValue = lead + DICT[norm] + trail;
+  });
+  root.querySelectorAll('[placeholder]').forEach(el=>{
+    const k=(el.getAttribute('placeholder')||'').trim().replace(/\u00a0/g,' ');
+    if(DICT[k]!==undefined) el.setAttribute('placeholder',DICT[k]);
+  });
+}
+
+let VIEW = {name:'home', params:{}};
+// État transitoire du questionnaire
+let QUIZ = null;
+
+const ICONS = {
+  compass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><polygon points="16 8 13 13 8 16 11 11 16 8" fill="currentColor" stroke="none"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.3c-.8.4-1.1 1-1.1 1.7"/><circle cx="12" cy="16.5" r=".8" fill="currentColor" stroke="none"/></svg>',
+  resume:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12a8 8 0 1 1 2.3 5.6"/><polyline points="4 20 4 14 10 14"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="15 18 9 12 15 6"/></svg>',
+  swap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><polyline points="17 3 21 7 17 11"/><path d="M3 7h18"/><polyline points="7 21 3 17 7 13"/><path d="M21 17H3"/></svg>',
+  relay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h12"/><polyline points="12 6 18 12 12 18"/><circle cx="20" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 3 14.5 9 21 9.5 16 14 17.5 20.5 12 17 6.5 20.5 8 14 3 9.5 9.5 9"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
+};
+const catIcon = () => ICONS.target;
+
+/* ---------- Composants utilitaires ---------- */
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.innerHTML=ICONS.check+'<span>'+msg+'</span>';
+  t.classList.add('show'); clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),1900);
+}
+function copy(text, msg){ navigator.clipboard?.writeText(text).then(()=>toast(msg||'Copié')).catch(()=>toast('Copie impossible')); }
+function openModal(html){
+  const root=document.getElementById('modal-root');
+  root.innerHTML='<div class="modal-bg" onclick="if(event.target===this)closeModal()">'+html+'</div>';
+}
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+function aiLogo(t, size){ const s=size||34; return `<div class="ai-logo" style="width:${s}px;height:${s}px;background:${t.color}">${t.name[0]}</div>`; }
+function stars(n){ return '★'.repeat(n)+'<span style="color:var(--line-strong)">'+'★'.repeat(5-n)+'</span>'; }
+function pricingBadge(p){ const m={free:['free','Gratuit'],freemium:['freemium','Freemium'],paid:['paid','Payant']}; const [c,l]=m[p]; return `<span class="badge ${c}">${l}</span>`; }
+
+/* ---------- Routeur ---------- */
+function go(name, params){ VIEW={name, params:params||{}}; window.scrollTo(0,0); render(); }
+
+function render(){
+  app.innerHTML = topbar() + `<main id="main">` + viewHtml() + `</main>` + footer();
+  applyI18n();
+}
+function viewHtml(){
+  switch(VIEW.name){
+    case 'home': return homeView();
+    case 'quiz': return quizView();
+    case 'plan': return planView();
+    case 'cockpit': return cockpitView();
+    case 'final': return finalView();
+    case 'explore': return exploreView();
+    case 'sheet': return sheetView();
+    case 'compare': return compareView();
+    case 'projects': return projectsView();
+    case 'favorites': return favoritesView();
+    case 'learn': return learnView();
+    default: return homeView();
+  }
+}
+
+/* ---------- Top bar & footer ---------- */
+function topbar(){
+  const items=[['home','Accueil'],['projects','Mes projets'],['explore','Explorer les IA'],['compare','Comparateur'],['favorites','Favoris'],['learn','Apprendre']];
+  return `<header class="topbar"><div class="container topbar-in">
+    <div class="brand" onclick="go('home')">
+      <span class="mark">${ICONS.compass}</span><span class="full">AI GPS</span>
+    </div>
+    <nav class="nav">${items.map(([k,l])=>`<button class="${VIEW.name===k?'active':''}" onclick="go('${k}')">${l}</button>`).join('')}</nav>
+    <div class="topbar-cta" style="display:flex;align-items:center;gap:10px">
+      <button class="btn ghost sm" style="padding:6px 10px" onclick="setLang('${LANG==='fr'?'en':'fr'}')" title="Language">${LANG==='fr'?'EN':'FR'}</button>
+      <button class="btn gold sm" onclick="startNew()">Nouveau projet</button></div>
+  </div></header>`;
+}
+function footer(){
+  return `<footer class="footer"><div class="container footer-in">
+    <div class="honesty">${badge('manual','Relais manuel & assisté')} <span>V1 sans API — aucune IA n\u2019est appelée automatiquement.</span></div>
+    <div>AI GPS · le GPS des intelligences artificielles</div>
+  </div></footer>`;
+}
+function badge(cls,label){ return `<span class="badge ${cls}">${label}</span>`; }
+
+/* ---------- ACCUEIL ---------- */
+function homeView(){
+  const cats=['Création','Image','Vidéo','Audio','Texte','Code','Recherche','Data','Présentation','Marketing','Automatisation','Design','Éducation','Traduction','Autre'];
+  const resume = STORE.data.projects.find(p=>p.status!=='done');
+  return `
+  <section class="hero"><div class="container hero-grid">
+    <div>
+      <div class="eyebrow"><span class="line"></span> Le GPS des intelligences artificielles</div>
+      <h1>Que veux-tu accomplir&nbsp;?</h1>
+      <p class="sub">Décris ton objectif. Je construis le meilleur parcours entre les IA : laquelle utiliser, pour quoi faire, dans quel ordre, et comment passer le résultat de l\u2019une à l\u2019autre.</p>
+      <div class="hero-input">
+        <input id="goalInput" placeholder="Ex : je veux créer une application de personnages Kawaii…" onkeydown="if(event.key==='Enter')startFromInput()" />
+        <button class="btn gold" onclick="startFromInput()">Tracer le parcours</button>
+      </div>
+      <div class="hero-hint">Pas sûr de ton besoin&nbsp;? <b onclick="startNew()">Réponds à quelques questions</b> · ou <b onclick="loadDemo()">essaie la démo Kawaii</b>.</div>
+    </div>
+    <div class="route-viz">
+      <div class="rv-title">Exemple de parcours généré</div>
+      ${routeNode('O','OBJECTIF','App Kawaii animée','goal')}
+      ${routeNode('1','ÉTAPE 1 · Cadrage','ChatGPT','active')}
+      ${routeNode('2','ÉTAPE 2 · Code','Claude','')}
+      ${routeNode('3','ÉTAPE 3 · Visuels','Leonardo','')}
+      ${routeNode('4','ÉTAPE 4 · Animation','Kling','')}
+    </div>
+  </div></section>
+
+  <section class="section"><div class="container">
+    <div class="section-head"><h2>Par où veux-tu commencer&nbsp;?</h2><p>Quatre façons d\u2019entrer. Le cœur reste le même : de ton objectif jusqu\u2019au résultat.</p></div>
+    <div class="modes">
+      ${mode('target','Par objectif','« Je veux créer une vidéo. » Décris le but, je m\u2019occupe du chemin.',"startNew()")}
+      ${mode('grid','Par catégorie','Tu sais dans quel domaine tu es, mais pas quelle IA choisir.',"go('explore')")}
+      ${mode('help','Je ne sais pas','Aucune idée de par où commencer ? Je te guide pas à pas.',"startNew()")}
+      ${mode('resume','Reprendre un projet', resume? 'Reprends « '+esc(resume.name)+' » là où tu t\u2019es arrêté.' : 'Tes projets en cours réapparaissent ici.', resume? "openProject('"+resume.id+"')":"go('projects')")}
+    </div>
+  </div></section>
+
+  <section class="section"><div class="container">
+    <div class="section-head"><h2>Explorer par catégorie</h2><p>Un point d\u2019entrée rapide vers les bons outils.</p></div>
+    <div class="cats">${cats.map(c=>`<button class="cat" onclick="go('explore')">${c}</button>`).join('')}</div>
+  </div></section>`;
+}
+function routeNode(k,kk,v,cls){ return `<div class="route-node ${cls||''}"><div class="rn-ico">${k}</div><div class="rn-body"><div class="rn-k">${kk}</div><div class="rn-v">${v}</div></div></div>`; }
+function mode(ic,t,d,act){ return `<button class="mode" onclick="${act}"><div class="m-ico">${ICONS[ic]}</div><h3>${t}</h3><p>${d}</p></button>`; }
+
+function startFromInput(){
+  const v=(document.getElementById('goalInput')||{}).value||'';
+  QUIZ={ answers:{ freeText:v.trim() }, step:0, freeStart:!!v.trim() };
+  go('quiz');
+}
+function startNew(){ QUIZ={ answers:{}, step:0 }; go('quiz'); }
+function loadDemo(){
+  const wf=buildWorkflow('kawaii', {priority:'balance', owned:STORE.data.prefs.owned});
+  const p={ id:uid(), name:'Mon application Kawaii', templateKey:'kawaii', workflow:wf, memory:['Identité visuelle : pastel, contours doux'], currentStep:0, status:'active', createdAt:Date.now(), updatedAt:Date.now() };
+  STORE.upsertProject(p); go('cockpit',{id:p.id});
+}
+
+/* ---------- QUESTIONNAIRE (conditionnel, progressif) ---------- */
+function quizQuestions(){
+  // Questions générées dynamiquement selon les réponses déjà données
+  const a=QUIZ.answers;
+  const qs=[];
+  qs.push({ key:'create', q:'Que veux-tu créer&nbsp;?', help:'On part de ton besoin, pas du nom d\u2019une IA.',
+    type:'single', options:['Application','Site web','Image','Vidéo','Présentation','Analyse de données','Recherche','Marketing','Automatisation','Autre'] });
+  if(a.create==='Application') qs.push({ key:'appType', q:'Quel type d\u2019application&nbsp;?', type:'single',
+    options:['Web / PWA','Mobile','Prototype / MVP','Application complète'] });
+  qs.push({ key:'level', q:'Quel est ton niveau avec les IA&nbsp;?', help:'Ça ajuste le niveau d\u2019accompagnement.',
+    type:'single', options:['Débutant','Intermédiaire','Avancé','Expert'] });
+  qs.push({ key:'priority', q:'Ta priorité principale&nbsp;?', help:'Une IA n\u2019est pas "meilleure" dans l\u2019absolu — mais meilleure pour toi, ici.',
+    type:'single', options:PRIORITIES.map(p=>p.label) });
+  qs.push({ key:'owned', q:'Utilises-tu déjà certains outils&nbsp;?', help:'Je ne te ferai pas changer d\u2019outil sans raison.',
+    type:'multi', options:AI_TOOLS.slice(0,10).map(t=>t.name) });
+  return qs;
+}
+function quizView(){
+  const qs=quizQuestions();
+  const idx=Math.min(QUIZ.step, qs.length-1);
+  const q=qs[idx];
+  const pct=Math.round(((idx)/(qs.length))*100);
+  const a=QUIZ.answers;
+  const sel=a[q.key];
+  const optsHtml=q.options.map(o=>{
+    const on = q.type==='multi' ? (Array.isArray(sel)&&sel.includes(o)) : sel===o;
+    return `<button class="opt ${q.type==='multi'?'multi':''} ${on?'selected':''}" onclick="pickOpt('${q.key}','${escq(o)}','${q.type}')">
+      <span class="o-check">${on?ICONS.check:''}</span><span>${o}</span></button>`;
+  }).join('');
+  const freeBlock = idx===0 ? `<div class="freeform" style="margin-top:18px">
+      <div class="field"><div class="f-label">Ou décris ton besoin librement</div>
+      <textarea id="freeText" placeholder="Ex : je veux automatiser l\u2019envoi de mes factures…">${esc(a.freeText||'')}</textarea></div></div>` : '';
+  return `<div class="container quiz-wrap"><div class="quiz">
+    <div class="quiz-progress"><div class="bar" style="width:${pct}%"></div></div>
+    <div class="quiz-step-num">Question ${idx+1} sur ${qs.length}</div>
+    <h2>${q.q}</h2>${q.help?`<p class="q-help">${q.help}</p>`:''}
+    <div class="opts">${optsHtml}</div>
+    ${freeBlock}
+    <div class="quiz-nav">
+      <button class="btn ghost" onclick="quizBack()">${idx===0?'Annuler':'Précédent'}</button>
+      <button class="btn ${canNext(q)?'gold':''}" ${canNext(q)?'':'disabled'} onclick="quizNext()">${idx>=qs.length-1?'Voir mon parcours':'Continuer'}</button>
+    </div>
+  </div></div>`;
+}
+function canNext(q){ const a=QUIZ.answers; if(q.type==='multi') return true; return !!a[q.key] || (q.key==='create'&&a.freeText); }
+function pickOpt(key,val,type){
+  val=unescq(val); const a=QUIZ.answers;
+  if(type==='multi'){ a[key]=a[key]||[]; const i=a[key].indexOf(val); if(i>=0)a[key].splice(i,1); else a[key].push(val); }
+  else a[key]=val;
+  render();
+}
+function quizBack(){ if(QUIZ.step===0){ go('home'); } else { QUIZ.step--; render(); } }
+function quizNext(){
+  const qs=quizQuestions();
+  if(QUIZ.step===0){ const ft=document.getElementById('freeText'); if(ft) QUIZ.answers.freeText=ft.value; }
+  if(QUIZ.step>=qs.length-1){ buildFromQuiz(); return; }
+  QUIZ.step++; render();
+}
+function buildFromQuiz(){
+  const a=QUIZ.answers;
+  const templateKey = GOAL_TO_TEMPLATE[a.create] || 'application';
+  const priority = (PRIORITIES.find(p=>p.label===a.priority)||{}).id || 'balance';
+  const ownedIds = (a.owned||[]).map(n=>(AI_TOOLS.find(t=>t.name===n)||{}).id).filter(Boolean);
+  STORE.data.prefs={ owned:ownedIds, level:a.level||'Débutant' }; STORE.save();
+  const wf=buildWorkflow(templateKey, {priority, owned:ownedIds});
+  const name = a.freeText ? capitalize(a.freeText.slice(0,60)) : (WORKFLOW_TEMPLATES[templateKey]||{}).label || 'Mon projet';
+  QUIZ._draft={ id:uid(), name, templateKey, workflow:wf, memory:[], currentStep:0, status:'draft', priority, createdAt:Date.now(), updatedAt:Date.now() };
+  go('plan');
+}
+
+/* ---------- PARCOURS RECOMMANDÉ ---------- */
+function planView(){
+  const p=QUIZ&&QUIZ._draft; if(!p) return emptyState('Aucun parcours','Commence un nouveau projet.',"startNew()","Nouveau projet");
+  const stepsHtml=p.workflow.steps.map((st,i)=>{
+    const t=tool(st.aiId);
+    const altChips=Object.entries(st.alts).filter(([k,id])=>id&&id!==st.aiId).slice(0,3)
+      .map(([k,id])=>`<span class="alt-chip" onclick="openSheet('${id}')"><span class="k">${k} :</span> ${tool(id).name}</span>`).join('');
+    return `<div class="plan-step">
+      <div class="plan-idx">${i+1}</div>
+      <div class="plan-body">
+        <div class="ps-obj">${st.obj}</div>
+        <div class="ps-need">${NEED_MAP[st.need].label} · ${badge('','Relais assisté')}</div>
+        ${t?`<div class="ai-pick">${aiLogo(t)}<div><div class="ap-name">${t.name}</div><div class="ap-why">${st.why}</div></div>
+          <div class="ap-score"><div class="sc">${st.score}%</div><div class="scl">correspondance</div></div></div>`:''}
+        ${altChips?`<div class="alts">${altChips}</div>`:''}
+      </div></div>`;
+  }).join('');
+  return `<div class="container plan-wrap">
+    <div class="plan-head"><h2>Voici ton parcours recommandé</h2>
+      <p>${p.workflow.steps.length} étapes · chaque IA est choisie pour <b>cette étape</b> et pour <b>ton profil</b>, pas dans l\u2019absolu.</p></div>
+    <div class="hb">${ICONS.help} Tu gardes la main : change une IA, vois les alternatives, ou ajuste avant de lancer.</div>
+    ${stepsHtml}
+    <div class="quiz-nav" style="margin-top:26px">
+      <button class="btn ghost" onclick="go('quiz')">${ICONS.back} Ajuster mes réponses</button>
+      <button class="btn gold" onclick="confirmPlan()">Lancer ce parcours ${ICONS.relay}</button>
+    </div>
+  </div>`;
+}
+function confirmPlan(){ const p=QUIZ._draft; p.status='active'; STORE.upsertProject(p); go('cockpit',{id:p.id}); }
+
+/* ---------- COCKPIT ---------- */
+function cockpitView(){
+  const p=STORE.getProject(VIEW.params.id);
+  if(!p) return emptyState('Projet introuvable','Il a peut-être été supprimé.',"go('projects')","Mes projets");
+  const wf=p.workflow; const cur=p.currentStep; const step=wf.steps[cur];
+  const done=wf.steps.filter(s=>s.status==='done').length;
+  const pct=Math.round((done/wf.steps.length)*100);
+
+  const track=wf.steps.map((st,i)=>{
+    const t=tool(st.aiId); const stt=statusLabel(st.status);
+    return `<div class="track-step ${i===cur?'current':''} ${i===cur?'m-show':''}" onclick="gotoStep('${p.id}',${i})">
+      <div class="ts-top"><span class="dot ${statusDot(st.status)}"></span><span class="ts-n">ÉTAPE ${i+1}</span><span class="ts-status">${stt}</span></div>
+      <div class="ts-ai">${t?t.name:'—'}</div>
+      <div class="ts-obj">${st.obj}</div></div>`;
+  }).join('');
+
+  return `<div class="cockpit"><div class="container">
+    <div class="cockpit-top">
+      <div><h2>${esc(p.name)}</h2><div class="ct-meta">Objectif atteint à ${pct}% · ${done}/${wf.steps.length} étapes ${badge('manual','V1 · relais assisté')}</div></div>
+      <div style="display:flex;gap:8px"><button class="btn sm" onclick="go('projects')">${ICONS.folder} Projets</button>
+        <button class="btn sm" onclick="simulate('${p.id}')">Mode simulation</button></div>
+    </div>
+
+    <div class="m-stepper"><span class="ms-count">Étape ${cur+1}/${wf.steps.length}</span>
+      <span class="ms-bar"><i style="width:${pct}%"></i></span></div>
+
+    <div class="route-track m-list">${track}</div>
+
+    ${missionCard(p, step, cur)}
+  </div></div>`;
+}
+function statusLabel(s){ return ({todo:'À venir',progress:'En cours',wait:'Action requise',done:'Terminée',blocked:'Bloquée'})[s]||s; }
+function statusDot(s){ return ({todo:'todo',progress:'progress',wait:'wait',done:'done',blocked:'blocked'})[s]||'todo'; }
+
+function missionCard(p, step, i){
+  const t=tool(step.aiId);
+  const isLast=i===p.workflow.steps.length-1;
+  const prompt=step.prompt;
+  return `<div class="mission">
+    <div class="mission-main">
+      <div class="mission-head"><span class="badge gold">Carte de mission · étape ${i+1}</span>
+        <span class="mh-obj">${step.obj}</span></div>
+      <div class="field"><div class="f-body" style="color:var(--ink-soft)">${NEED_MAP[step.need].label}</div></div>
+
+      ${t?`<div class="mission-ai">${aiLogo(t,40)}
+        <div style="flex:1"><div style="font-weight:600;font-family:var(--font-display)">${t.name} ${pricingBadge(t.pricing)}</div>
+        <div style="font-size:12.5px;color:var(--ink-soft)">${step.why}</div></div>
+        <button class="btn sm" onclick="openReplace('${p.id}',${i})">${ICONS.swap} Changer</button></div>`:''}
+
+      <div class="field"><div class="f-label">Ce dont l\u2019IA a besoin (entrées)</div>
+        <ul>${step.inputs.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+
+      <div class="field"><div class="f-label">Prompt préparé</div>
+        <div class="prompt-box"><button class="btn sm copy-btn" onclick="copy(${jsstr(prompt)},'Prompt copié')">${ICONS.copy} Copier</button>${esc(prompt)}</div></div>
+
+      <div class="field"><div class="f-label">Résultat attendu</div><div class="f-body">${step.expected}</div></div>
+
+      <div class="field"><div class="f-label">Colle ici le résultat obtenu</div>
+        <textarea class="result-input" id="resInput" placeholder="Colle la réponse de ${t?t.name:'l\u2019IA'} ici pour la conserver et la transmettre à l\u2019étape suivante…">${esc(step.result||'')}</textarea>
+        <div style="margin-top:8px"><button class="btn sm" onclick="saveResult('${p.id}',${i})">Enregistrer le résultat</button></div>
+      </div>
+
+      <div class="mission-actions">
+        <button class="btn primary" id="runBtn" onclick="runStep('${p.id}',${i})">${ICONS.relay} Exécuter avec l\u2019IA <span class="badge connected" style="margin-left:2px">Connecté</span></button>
+        <button class="btn" onclick="copy(${jsstr(prompt)},'Prompt copié')">${ICONS.copy} Copier le prompt <span class="badge manual" style="margin-left:2px">Manuel</span></button>
+        ${t?`<a class="btn" href="${t.url}" target="_blank" rel="noopener">${ICONS.ext} Ouvrir ${t.name}</a>`:''}
+        <button class="btn" onclick="openRelay('${p.id}',${i})">${ICONS.relay} Passer le relais</button>
+        ${i>0?`<button class="btn ghost" onclick="gotoStep('${p.id}',${i-1})">${ICONS.back} Étape précédente</button>`:''}
+        <button class="btn gold" style="margin-left:auto" onclick="completeStep('${p.id}',${i})">${ICONS.check} ${isLast?'Terminer le projet':'Valider & étape suivante'}</button>
+      </div>
+    </div>
+
+    <div class="mission-side">
+      <div class="side-card"><h4>Où en suis-je&nbsp;?</h4>
+        <div class="status-list">
+          <div class="status-row"><span class="dot done"></span> ${p.workflow.steps.filter(s=>s.status==='done').length} terminée(s)</div>
+          <div class="status-row"><span class="dot progress"></span> Étape ${i+1} en cours</div>
+          <div class="status-row"><span class="dot todo"></span> ${p.workflow.steps.filter(s=>s.status==='todo').length} à venir</div>
+        </div></div>
+
+      <div class="side-card"><h4>Critères de validation</h4>
+        <div class="status-list">${step.validation.map(v=>`<div class="status-row"><span class="dot todo"></span> ${v}</div>`).join('')}</div>
+        <div style="margin-top:12px"><button class="btn sm block" onclick="markInsufficient('${p.id}',${i})">Résultat insuffisant · recommencer</button></div>
+      </div>
+
+      <div class="side-card"><h4>Mémoire du projet</h4>
+        ${p.memory.length?p.memory.map((m,mi)=>`<div class="mem-item">${esc(m)}</div>`).join(''):'<div style="font-size:13px;color:var(--ink-faint)">Aucune décision enregistrée. Les choix importants s\u2019ajoutent ici et voyagent dans chaque relais.</div>'}
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <input id="memInput" placeholder="Ajouter une décision…" style="flex:1;border:1px solid var(--line-strong);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px" onkeydown="if(event.key==='Enter')addMemory('${p.id}')"/>
+          <button class="btn sm" onclick="addMemory('${p.id}')">+</button></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Actions cockpit ---------- */
+function gotoStep(id,i){ const p=STORE.getProject(id); p.currentStep=i; STORE.upsertProject(p); render(); }
+function saveResult(id,i){
+  const p=STORE.getProject(id); const v=(document.getElementById('resInput')||{}).value||'';
+  p.workflow.steps[i].result=v; if(v && p.workflow.steps[i].status==='todo') p.workflow.steps[i].status='progress';
+  p.updatedAt=Date.now(); STORE.upsertProject(p); toast('Résultat enregistré');
+}
+function addMemory(id){
+  const p=STORE.getProject(id); const inp=document.getElementById('memInput'); const v=(inp.value||'').trim();
+  if(!v) return; p.memory.push(v); STORE.upsertProject(p); render(); toast('Décision ajoutée à la mémoire');
+}
+function completeStep(id,i){
+  const p=STORE.getProject(id); const v=(document.getElementById('resInput')||{}).value;
+  if(v!=null) p.workflow.steps[i].result=v;
+  p.workflow.steps[i].status='done';
+  const isLast=i===p.workflow.steps.length-1;
+  if(isLast){ p.status='done'; p.updatedAt=Date.now(); STORE.upsertProject(p); go('final',{id}); return; }
+  p.workflow.steps[i+1].status='progress'; p.currentStep=i+1; p.updatedAt=Date.now();
+  STORE.upsertProject(p); toast('Étape validée · relais prêt'); render();
+}
+function markInsufficient(id,i){
+  const p=STORE.getProject(id); p.workflow.steps[i].status='progress';
+  STORE.upsertProject(p);
+  openModal(`<div class="modal"><div class="modal-head"><h3>Résultat insuffisant</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+   <div class="modal-body"><p style="color:var(--ink-soft);margin-bottom:16px">Que veux-tu faire pour améliorer cette étape&nbsp;?</p>
+   <div class="opts">
+     <button class="opt" onclick="closeModal();toast('Relance le prompt tel quel')">Recommencer avec le même prompt</button>
+     <button class="opt" onclick="closeModal();document.getElementById('resInput')?.focus()">Modifier le prompt / le contexte</button>
+     <button class="opt" onclick="closeModal();openReplace('${id}',${i})">Changer d\u2019IA pour cette étape</button>
+   </div></div></div>`);
+}
+
+/* ---------- Relay Pack ---------- */
+function openRelay(id,i){
+  const p=STORE.getProject(id); const pack=buildRelayPack(p,i);
+  const full=`OBJECTIF : ${pack.goal}\n\nÉTAPE : ${pack.stepObjective}\n\nCONTEXTE :\n${pack.context}\n\nDÉCISIONS DÉJÀ PRISES :\n${pack.decisions}\n\nRÉSULTATS PRÉCÉDENTS :\n${pack.previousResults}\n\nCE QUE TU DOIS FAIRE :\n${pack.prompt}\n\nRÉSULTAT ATTENDU :\n${pack.expected}\n\nCRITÈRES DE VALIDATION :\n${pack.validation}`;
+  const t=tool(p.workflow.steps[i].aiId);
+  openModal(`<div class="modal"><div class="modal-head"><h3>${ICONS.relay} Passer le relais</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <p style="color:var(--ink-soft);margin-bottom:16px">Voici le paquet préparé pour l\u2019étape en cours. ${badge('manual','Relais assisté')} — tu copies, tu colles dans l\u2019IA. Rien n\u2019est envoyé automatiquement (ce sera le mode connecté en V2).</p>
+      ${relayBlock('Objectif global',pack.goal)}
+      ${relayBlock('Décisions déjà prises',pack.decisions)}
+      ${relayBlock('Résultats précédents',pack.previousResults)}
+      ${relayBlock('Mission de l\u2019IA',pack.prompt)}
+      <div class="relay-actions">
+        <button class="btn gold" onclick="copy(${jsstr(full)},'Paquet complet copié')">${ICONS.copy} Copier tout</button>
+        <button class="btn" onclick="copy(${jsstr(pack.prompt)},'Prompt copié')">Copier le prompt</button>
+        <button class="btn" onclick="copy(${jsstr(pack.previousResults)},'Résultats copiés')">Copier les résultats</button>
+        <button class="btn" onclick="downloadPack('${id}',${i})">Télécharger (.json)</button>
+        ${t?`<a class="btn" href="${t.url}" target="_blank" rel="noopener">${ICONS.ext} Ouvrir ${t.name}</a>`:''}
+      </div>
+    </div></div>`);
+}
+function relayBlock(k,v){ return `<div class="relay-block"><div class="rb-k">${k}</div><div class="rb-v">${esc(v)}</div></div>`; }
+function downloadPack(id,i){
+  const p=STORE.getProject(id); const pack=buildRelayPack(p,i);
+  const blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='relay-pack-'+(i+1)+'.json'; a.click(); toast('Paquet téléchargé');
+}
+
+/* ---------- Remplacer une IA ---------- */
+function openReplace(id,i){
+  const p=STORE.getProject(id); const step=p.workflow.steps[i];
+  const axis=(PRIORITIES.find(x=>x.id===p.priority)||{}).axis||'balance';
+  const candidates=AI_TOOLS.filter(t=>t.needs.includes(step.need))
+    .map(t=>({t, s:scoreTool(t,step.need,axis,STORE.data.prefs.owned)})).sort((a,b)=>b.s-a.s);
+  const rows=candidates.map(({t})=>`<div class="ai-pick" style="margin-bottom:8px">
+    ${aiLogo(t)}<div style="flex:1"><div class="ap-name">${t.name} ${t.id===step.aiId?badge('gold','Actuelle'):''}</div>
+    <div class="ap-why">${t.specialties.slice(0,2).join(' · ')} · ${pricingBadge(t.pricing)}</div></div>
+    ${t.id===step.aiId?'':`<button class="btn sm gold" onclick="doReplace('${id}',${i},'${t.id}')">Choisir</button>`}</div>`).join('');
+  openModal(`<div class="modal"><div class="modal-head"><h3>${ICONS.swap} Changer l\u2019IA de cette étape</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body"><p style="color:var(--ink-soft);margin-bottom:16px">Classées selon ta priorité (${(PRIORITIES.find(x=>x.id===p.priority)||{}).label||'compromis'}). Tu peux aussi ouvrir la fiche pour comparer.</p>${rows}</div></div>`);
+}
+function doReplace(id,i,newId){
+  const p=STORE.getProject(id); p.workflow.steps[i].aiId=newId;
+  STORE.upsertProject(p); closeModal(); render(); toast('IA remplacée pour cette étape');
+}
+
+/* ---------- Simulation (clairement labellisée) ---------- */
+function simulate(id){
+  openModal(`<div class="modal"><div class="modal-head"><h3>Mode simulation</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+   <div class="modal-body"><div class="hb">${ICONS.help} Démonstration du fonctionnement <b>futur</b> (V2, avec API). Rien n\u2019est réellement exécuté ici.</div>
+   <div class="status-list" id="simLog"></div></div></div>`);
+  const log=document.getElementById('simLog');
+  const lines=['ChatGPT a terminé l\u2019étape 1.','Le relais est prêt.','Claude reçoit le contexte + le résultat.','Claude signale : « il me manque des images ».','L\u2019étape « Visuels » s\u2019active automatiquement.','Résultat transmis à l\u2019étape suivante.'];
+  let k=0; const tick=()=>{ if(k>=lines.length)return;
+    const row=document.createElement('div'); row.className='status-row';
+    row.innerHTML=`<span class="dot done"></span> ${lines[k]}`; log.appendChild(row); k++; setTimeout(tick,650); };
+  tick();
+}
+
+/* ---------- ÉCRAN FINAL ---------- */
+function finalView(){
+  const p=STORE.getProject(VIEW.params.id); if(!p) return emptyState('Projet introuvable','',"go('projects')","Mes projets");
+  const ais=[...new Set(p.workflow.steps.map(s=>tool(s.aiId)?.name).filter(Boolean))];
+  return `<div class="container final-wrap">
+    <div class="final-badge">${ICONS.trophy}</div>
+    <h2>Objectif atteint 🎉</h2>
+    <p style="color:var(--ink-soft)">« ${esc(p.name)} » — parcours terminé de bout en bout.</p>
+    <div class="recap">
+      <div class="recap-box"><div class="rk">Étapes réalisées</div><div class="rv">${p.workflow.steps.length}</div></div>
+      <div class="recap-box"><div class="rk">IA mobilisées</div><div class="rv">${ais.length}</div></div>
+      <div class="recap-box" style="grid-column:1/-1"><div class="rk">Parcours</div>
+        <div style="font-size:14px;color:var(--ink);margin-top:6px">${ais.join('  →  ')}</div></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" onclick="go('cockpit',{id:'${p.id}'})">Revoir le projet</button>
+      <button class="btn" onclick="duplicateProject('${p.id}')">Dupliquer</button>
+      <button class="btn" onclick="exportProject('${p.id}')">Exporter (.json)</button>
+      <button class="btn gold" onclick="startNew()">Nouveau projet</button>
+    </div>
+  </div>`;
+}
+function duplicateProject(id){
+  const src=STORE.getProject(id); const copy=JSON.parse(JSON.stringify(src));
+  copy.id=uid(); copy.name=src.name+' (copie)'; copy.status='active'; copy.currentStep=0;
+  copy.workflow.steps.forEach((s,i)=>{ s.status=i===0?'progress':'todo'; s.result=''; });
+  copy.createdAt=Date.now(); STORE.upsertProject(copy); go('cockpit',{id:copy.id}); toast('Projet dupliqué');
+}
+function exportProject(id){
+  const p=STORE.getProject(id); const blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(p.name||'projet')+'.json'; a.click(); toast('Projet exporté');
+}
+
+/* ---------- EXPLORER LES IA ---------- */
+let EXPLORE_FILTER={cat:'Toutes', q:''};
+function exploreView(){
+  const cats=['Toutes',...new Set(AI_TOOLS.map(t=>t.cat))];
+  const list=AI_TOOLS.filter(t=>(EXPLORE_FILTER.cat==='Toutes'||t.cat===EXPLORE_FILTER.cat)
+    && (t.name+' '+t.specialties.join(' ')).toLowerCase().includes(EXPLORE_FILTER.q.toLowerCase()));
+  return `<div class="section"><div class="container">
+    <div class="section-head"><h2>Explorer les IA</h2><p>Le catalogue est secondaire : le cœur reste le parcours. Ici, tu compares et tu comprends chaque outil.</p></div>
+    <div class="explore-top">
+      <div class="search">${ICONS.search}<input placeholder="Rechercher une IA…" value="${esc(EXPLORE_FILTER.q)}" oninput="EXPLORE_FILTER.q=this.value;refreshExplore()"/></div>
+      <div class="filters">${cats.map(c=>`<button class="filter ${EXPLORE_FILTER.cat===c?'on':''}" onclick="EXPLORE_FILTER.cat='${c}';refreshExplore()">${c}</button>`).join('')}</div>
+    </div>
+    <div class="ai-grid" id="aiGrid">${list.map(aiCard).join('')||'<p style="color:var(--ink-faint)">Aucune IA ne correspond.</p>'}</div>
+  </div></div>`;
+}
+function refreshExplore(){ const g=document.getElementById('aiGrid'); if(!g)return;
+  const list=AI_TOOLS.filter(t=>(EXPLORE_FILTER.cat==='Toutes'||t.cat===EXPLORE_FILTER.cat)
+    && (t.name+' '+t.specialties.join(' ')).toLowerCase().includes(EXPLORE_FILTER.q.toLowerCase()));
+  document.querySelectorAll('.filters .filter').forEach(f=>f.classList.toggle('on', f.textContent===EXPLORE_FILTER.cat));
+  g.innerHTML=list.map(aiCard).join('')||'<p style="color:var(--ink-faint)">Aucune IA ne correspond.</p>';
+}
+function aiCard(t){
+  return `<div class="ai-card" onclick="openSheet('${t.id}')">
+    <div class="ai-card-head">${aiLogo(t,38)}<div><h3>${t.name}</h3><div class="ac-cat">${t.cat}</div></div></div>
+    <div class="ac-desc">${t.specialties.slice(0,3).join(' · ')}</div>
+    <div class="ai-card-foot"><span class="stars">${stars(t.quality)}</span>${pricingBadge(t.pricing)}${t.api?badge('','API'):''}</div>
+  </div>`;
+}
+
+/* ---------- FICHE IA ---------- */
+function openSheet(id){ VIEW={name:'sheet',params:{id}}; window.scrollTo(0,0); render(); }
+function sheetView(){
+  const t=tool(VIEW.params.id); if(!t) return emptyState('IA introuvable','',"go('explore')","Explorer");
+  const inWorkflows=Object.values(WORKFLOW_TEMPLATES).filter(w=>w.steps.some(s=>NEED_MAP[s.need].cat===t.cat)).map(w=>w.label);
+  return `<div class="section"><div class="container" style="max-width:820px">
+    <button class="btn ghost sm" onclick="go('explore')">${ICONS.back} Retour au catalogue</button>
+    <div class="card pad-lg" style="margin-top:16px">
+      <div class="sheet-hero">${aiLogo(t,54)}
+        <div style="flex:1"><h2 style="font-size:26px">${t.name}</h2>
+          <div style="color:var(--ink-soft);margin-top:2px">${t.cat} · ${t.specialties.join(' · ')}</div></div>
+        <button class="btn sm ${STORE.isFav(t.id)?'gold':''}" onclick="STORE.toggleFav('${t.id}');render()">${ICONS.star} ${STORE.isFav(t.id)?'Favori':'Ajouter'}</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        ${pricingBadge(t.pricing)} ${t.api?badge('','API disponible'):badge('manual','Sans API publique')} ${badge('','Niveau : '+t.level)}
+        ${badge('manual','Vérifié : '+t.lastVerified)} ${badge('','Confiance : '+t.confidence)}</div>
+
+      <div class="sheet-grid">
+        <div class="sheet-box"><div class="sb-k">Forces</div><div class="pill-list">${t.strengths.map(s=>`<span class="pill">${s}</span>`).join('')}</div></div>
+        <div class="sheet-box"><div class="sb-k">Limites</div><div class="pill-list">${t.weaknesses.map(s=>`<span class="pill neg">${s}</span>`).join('')}</div></div>
+        <div class="sheet-box"><div class="sb-k">Formats acceptés</div><div class="sb-v">${t.inputs.join(', ')}</div></div>
+        <div class="sheet-box"><div class="sb-k">Formats générés</div><div class="sb-v">${t.outputs.join(', ')}</div></div>
+      </div>
+
+      <div class="sheet-grid" style="grid-template-columns:repeat(4,1fr)">
+        ${metric('Qualité',t.quality)}${metric('Facilité',t.ease)}${metric('Rapidité',t.speed)}${metric('Confidentialité',t.privacy)}
+      </div>
+
+      <div class="field"><div class="f-label">Dans quels parcours cette IA est-elle pertinente&nbsp;?</div>
+        <div class="pill-list">${inWorkflows.length?inWorkflows.map(w=>`<span class="pill">${w}</span>`).join(''):'<span style="color:var(--ink-faint)">—</span>'}</div></div>
+
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <a class="btn gold" href="${t.url}" target="_blank" rel="noopener">${ICONS.ext} Ouvrir ${t.name}</a>
+        <button class="btn" onclick="go('compare')">Comparer avec une autre IA</button>
+      </div>
+    </div>
+  </div></div>`;
+}
+function metric(label,n){ return `<div class="sheet-box"><div class="sb-k">${label}</div><div class="stars" style="font-size:15px">${stars(n)}</div></div>`; }
+
+/* ---------- COMPARATEUR ---------- */
+let CMP=['chatgpt','claude'];
+function compareView(){
+  const opts=AI_TOOLS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  const ts=CMP.map(tool).filter(Boolean);
+  const rows=[
+    ['Catégorie',t=>t.cat],['Prix',t=>({free:'Gratuit',freemium:'Freemium',paid:'Payant'})[t.pricing]],
+    ['Qualité',t=>stars(t.quality)],['Facilité',t=>stars(t.ease)],['Rapidité',t=>stars(t.speed)],
+    ['Confidentialité',t=>stars(t.privacy)],['API',t=>t.api?'Oui':'Non'],
+    ['Entrées',t=>t.inputs.join(', ')],['Sorties',t=>t.outputs.join(', ')],['Niveau',t=>t.level]
+  ];
+  return `<div class="section"><div class="container" style="max-width:820px">
+    <div class="section-head"><h2>Comparateur d\u2019IA</h2><p>Pour <b>ton</b> projet, laquelle choisir&nbsp;? Compare sur les critères qui comptent.</p></div>
+    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+      ${CMP.map((id,i)=>`<select onchange="CMP[${i}]=this.value;render()" style="padding:10px;border:1px solid var(--line-strong);border-radius:10px;font-family:inherit;font-size:14px">${opts.replace('value="'+id+'"','value="'+id+'" selected')}</select>`).join('')}
+      ${CMP.length<3?`<button class="btn sm" onclick="CMP.push('gemini');render()">+ Ajouter une IA</button>`:`<button class="btn sm ghost" onclick="CMP.pop();render()">− Retirer</button>`}
+    </div>
+    <div class="card" style="padding:0;overflow:auto"><table class="cmp-table">
+      <thead><tr><th>Critère</th>${ts.map(t=>`<th>${t.name}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(([label,fn])=>`<tr><td>${label}</td>${ts.map(t=>`<td>${fn(t)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>
+  </div></div>`;
+}
+
+/* ---------- PROJETS ---------- */
+function projectsView(){
+  const ps=STORE.data.projects;
+  if(!ps.length) return `<div class="section"><div class="container">${emptyInner('Aucun projet pour l\u2019instant','Lance ton premier parcours d\u2019IA — il se sauvegardera ici automatiquement.',"startNew()","Nouveau projet")}</div></div>`;
+  return `<div class="section"><div class="container">
+    <div class="section-head"><h2>Mes projets</h2><p>Reprends où tu t\u2019es arrêté. Tout est sauvegardé localement dans ton navigateur.</p></div>
+    <div class="proj-grid">${ps.map(projCard).join('')}</div>
+  </div></div>`;
+}
+function projCard(p){
+  const done=p.workflow.steps.filter(s=>s.status==='done').length;
+  const pct=Math.round(done/p.workflow.steps.length*100);
+  const cur=p.workflow.steps[p.currentStep]; const t=cur?tool(cur.aiId):null;
+  return `<div class="proj-card">
+    <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+      <h3>${esc(p.name)}</h3>${p.status==='done'?badge('free','Terminé'):badge('gold','En cours')}</div>
+    <div class="proj-meta"><span>${p.workflow.steps.length} étapes</span><span>·</span><span>${done} faites</span>${p.status!=='done'&&t?`<span>·</span><span>${t.name} attend</span>`:''}</div>
+    <div class="mini-bar"><i style="width:${pct}%"></i></div>
+    <div class="proj-actions">
+      <button class="btn sm gold" onclick="openProject('${p.id}')">${p.status==='done'?'Revoir':'Reprendre'}</button>
+      <button class="btn sm" onclick="duplicateProject('${p.id}')">Dupliquer</button>
+      <button class="btn sm ghost" onclick="confirmDelete('${p.id}')">Supprimer</button>
+    </div>
+  </div>`;
+}
+function openProject(id){ const p=STORE.getProject(id); if(!p)return; if(p.status==='done') go('final',{id}); else go('cockpit',{id}); }
+function confirmDelete(id){
+  openModal(`<div class="modal"><div class="modal-head"><h3>Supprimer ce projet&nbsp;?</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+   <div class="modal-body"><p style="color:var(--ink-soft);margin-bottom:18px">Cette action est définitive.</p>
+   <div style="display:flex;gap:10px;justify-content:flex-end">
+     <button class="btn" onclick="closeModal()">Annuler</button>
+     <button class="btn" style="background:var(--danger);color:#fff;border-color:var(--danger)" onclick="STORE.deleteProject('${id}');closeModal();render();toast('Projet supprimé')">Supprimer</button>
+   </div></div></div>`);
+}
+
+/* ---------- FAVORIS ---------- */
+function favoritesView(){
+  const favs=STORE.data.favorites.map(tool).filter(Boolean);
+  return `<div class="section"><div class="container">
+    <div class="section-head"><h2>Mes favoris</h2><p>Les IA que tu veux garder sous la main.</p></div>
+    ${favs.length?`<div class="ai-grid">${favs.map(aiCard).join('')}</div>`:emptyInner('Aucun favori','Ajoute des IA en favori depuis leur fiche.',"go('explore')","Explorer les IA")}
+  </div></div>`;
+}
+
+/* ---------- APPRENDRE ---------- */
+function learnView(){
+  const cards=[
+    ['Choisir la bonne IA','Aucune IA n\u2019est "la meilleure" partout. Le bon réflexe : partir du besoin de l\u2019étape, pas du nom de l\u2019outil.'],
+    ['Écrire un bon prompt','Donne le rôle, le contexte, l\u2019objectif et le format attendu. Plus c\u2019est précis, meilleur est le résultat.'],
+    ['Passer un résultat à une autre IA','Ne réexplique pas tout : transmets objectif + décisions + résultat précédent. C\u2019est le rôle du relais.'],
+    ['Reconnaître un bon résultat','Compare au résultat attendu et aux critères de validation de l\u2019étape avant de continuer.'],
+    ['Comprendre les limites','Les IA peuvent se tromper. Vérifie les faits importants, surtout via une IA de recherche sourcée.'],
+    ['Construire un workflow','Découpe l\u2019objectif en étapes, affecte une IA par étape, prévois la validation entre chaque.']
+  ];
+  return `<div class="section"><div class="container">
+    <div class="section-head"><h2>Apprendre à utiliser les IA</h2><p>L\u2019essentiel pour naviguer sereinement. Secondaire par rapport au parcours — mais utile.</p></div>
+    <div class="learn-grid">${cards.map(([t,d])=>`<div class="learn-card"><h3>${t}</h3><p>${d}</p></div>`).join('')}</div>
+  </div></div>`;
+}
+
+/* ---------- Empty states & helpers ---------- */
+function emptyState(t,d,act,label){ return `<div class="section"><div class="container">${emptyInner(t,d,act,label)}</div></div>`; }
+function emptyInner(t,d,act,label){ return `<div class="empty"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">${ICONS.compass.match(/<(circle|polygon)[^>]*>/g).join('')}</svg>
+  <h3 style="font-size:19px;color:var(--ink);margin-bottom:6px">${t}</h3><p style="margin-bottom:18px">${d}</p>
+  ${act?`<button class="btn gold" onclick="${act}">${label}</button>`:''}</div>`; }
+
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escq(s){ return String(s).replace(/'/g,'\\u0027').replace(/"/g,'&quot;'); }
+function unescq(s){ return String(s).replace(/\\u0027/g,"'").replace(/&quot;/g,'"'); }
+function jsstr(s){ return "'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'')+"'"; }
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* ---------- Boot ---------- */
+render();
+</script>
+</body>
+</html>
