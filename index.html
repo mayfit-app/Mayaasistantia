@@ -633,6 +633,56 @@ const WORKFLOW_TEMPLATES = {
     { need:'image', obj:'Visuels', why:'Créer les supports visuels.', inputs:['Contenu'], expected:'Visuels de campagne',
       prompt:'Crée les visuels de campagne cohérents avec ces messages [COLLER].', validation:['Cohérence visuelle'] }
   ]},
+
+  /* ===== BESOINS SIMPLES : 1 étape = 1 IA + 1 prompt (pas de parcours) ===== */
+  'apprendre-langue':{ label:'Apprendre une langue', icon:'book', steps:[
+    { need:'texte', obj:'Ton professeur particulier de langue', why:'Une IA conversationnelle est un excellent tuteur : elle s\u2019adapte à ton niveau, corrige, et fait pratiquer.',
+      inputs:['La langue visée','Ton niveau actuel'], expected:'Un plan d\u2019apprentissage + la 1re leçon (vocabulaire, une règle, des exercices corrigés)',
+      prompt:'Tu es mon professeur particulier de [PRÉCISE LA LANGUE : anglais, arabe, espagnol…], patient et structuré. Mon niveau : [débutant / intermédiaire]. 1) Établis un plan d\u2019apprentissage progressif sur 4 semaines. 2) Commence immédiatement la première leçon : vocabulaire de base thématique, une règle de grammaire expliquée simplement, et 5 exercices avec corrigés. 3) À la fin, pose-moi une question pour continuer. Langue d\u2019explication : français.',
+      validation:['Plan clair et progressif','Première leçon exploitable','Exercices avec corrigés'] }
+  ]},
+  'apprendre-outil':{ label:'Apprendre un outil', icon:'book', steps:[
+    { need:'texte', obj:'Ton formateur pour maîtriser un outil', why:'L\u2019IA explique pas à pas, avec des exemples concrets adaptés à ton niveau.',
+      inputs:['L\u2019outil visé (Excel, Word, Power BI…)','Ce que tu veux savoir faire'], expected:'Un parcours d\u2019apprentissage + la 1re leçon pratique',
+      prompt:'Tu es formateur expert de [PRÉCISE L\u2019OUTIL : Excel, Word, Power BI, Photoshop…]. Mon niveau : [débutant / intermédiaire]. Mon objectif concret : [DÉCRIS ce que tu veux réussir à faire]. 1) Donne-moi un parcours d\u2019apprentissage étape par étape. 2) Commence tout de suite la première leçon avec un exemple pratique que je peux reproduire. Explique simplement, sans jargon inutile.',
+      validation:['Parcours étape par étape','Exemple pratique reproductible','Adapté à mon objectif'] }
+  ]},
+  'apprendre-concept':{ label:'Apprendre un concept', icon:'book', steps:[
+    { need:'texte', obj:'Comprendre un concept ou une compétence', why:'L\u2019IA vulgarise, donne des exemples et vérifie ta compréhension.',
+      inputs:['Le sujet à comprendre','Ton niveau de départ'], expected:'Une explication claire + un moyen de vérifier que tu as compris',
+      prompt:'Explique-moi [PRÉCISE LE SUJET] comme si j\u2019étais [débutant complet / initié]. 1) Une explication claire avec une analogie du quotidien. 2) Un exemple concret. 3) Les 3 erreurs de compréhension les plus fréquentes. 4) 3 questions pour vérifier que j\u2019ai compris.',
+      validation:['Explication claire','Exemple concret','Vérification de compréhension'] }
+  ]},
+  'apprendre-ia':{ label:'Apprendre à utiliser l\u2019IA', icon:'book', steps:[
+    { need:'texte', obj:'Bien démarrer avec l\u2019IA', why:'Une IA généraliste est parfaite pour t\u2019expliquer comment l\u2019utiliser efficacement.',
+      inputs:['Ce que tu aimerais faire avec l\u2019IA'], expected:'Les bases + comment écrire de bons prompts pour ton cas',
+      prompt:'Je débute avec l\u2019IA. Mon objectif : [DÉCRIS ce que tu veux faire]. 1) Explique-moi simplement comment une IA peut m\u2019aider ici. 2) Apprends-moi à écrire un bon prompt pour ce cas précis, avec un exemple prêt à l\u2019emploi. 3) Préviens-moi des pièges (erreurs, vérifications à faire).',
+      validation:['Explication accessible','Exemple de prompt prêt','Pièges signalés'] }
+  ]},
+  'rediger-email':{ label:'Rédiger un email', icon:'target', steps:[
+    { need:'texte', obj:'Rédiger un email efficace', why:'Une IA rédactionnelle produit un email clair et bien tourné en quelques secondes.',
+      inputs:['Le destinataire','L\u2019objectif du message','Le ton souhaité'], expected:'Un email prêt à envoyer (2 variantes)',
+      prompt:'Rédige un email professionnel. Destinataire : [QUI]. Objectif : [POURQUOI tu écris]. Ton : [formel / cordial / direct]. Contexte utile : [DÉTAILS]. Donne 2 variantes (une formelle, une plus directe), objet inclus. Concis, sans formules creuses.',
+      validation:['Objet pertinent','Message clair et concis','2 variantes'] }
+  ]},
+  'rediger-texte':{ label:'Rédiger un texte', icon:'target', steps:[
+    { need:'texte', obj:'Rédiger un texte / article', why:'L\u2019IA structure et rédige à partir de ton brief.',
+      inputs:['Le sujet','La longueur et le ton','Le public visé'], expected:'Un texte structuré et prêt à relire',
+      prompt:'Rédige [un article / un texte] sur : [SUJET]. Public : [QUI]. Ton : [PRÉCISE]. Longueur : [PRÉCISE]. Structure claire (titre, intertitres, paragraphes courts). Va à l\u2019essentiel, pas de remplissage.',
+      validation:['Structure claire','Ton adapté','Prêt à relire'] }
+  ]},
+  'traduire':{ label:'Traduire un texte', icon:'target', steps:[
+    { need:'texte', obj:'Traduire un texte', why:'Les IA généralistes traduisent en gardant le ton et les nuances.',
+      inputs:['La langue cible','Le texte à traduire'], expected:'La traduction fidèle, ton préservé',
+      prompt:'Traduis le texte suivant en [LANGUE CIBLE], en gardant le ton et le sens (ni trop littéral, ni réécrit). Si une tournure est ambiguë, propose la meilleure option et signale-la. Texte :\n\n[COLLE TON TEXTE ICI]',
+      validation:['Traduction fidèle','Ton préservé','Ambiguïtés signalées'] }
+  ]},
+  'template-pro':{ label:'Créer un template pro', icon:'grid', steps:[
+    { need:'texte', obj:'Créer un modèle de document professionnel', why:'L\u2019IA produit une structure complète + un exemple rempli, prêt à coller dans Word.',
+      inputs:['Le type de document','Le contexte / secteur'], expected:'Un template structuré + un exemple rempli',
+      prompt:'Tu es expert en documents professionnels. Crée un template de [TYPE : compte-rendu, proposition commerciale, facture, CV, procédure…] pour [CONTEXTE / secteur]. Donne : 1) la structure complète (toutes les rubriques), 2) une version pré-remplie d\u2019exemple, 3) des conseils d\u2019utilisation. Format clair, prêt à copier dans Word.',
+      validation:['Structure complète','Exemple rempli','Prêt à réutiliser'] }
+  ]},
   automatisation:{ label:'Automatiser une tâche', icon:'auto', steps:[
     { need:'idee', obj:'Cartographier le processus', why:'Comprendre le flux avant d\u2019automatiser.', inputs:['Tâche'], expected:'Processus décrit',
       prompt:'Aide-moi à cartographier ce processus à automatiser : [DÉCRIRE]. Étapes, entrées, sorties, points de décision.', validation:['Étapes claires'] },
@@ -1053,83 +1103,126 @@ function mode(ic,t,d,act){ return `<button class="mode" onclick="${act}"><div cl
 
 function startFromInput(){
   const v=(document.getElementById('goalInput')||{}).value||'';
-  QUIZ={ answers:{ freeText:v.trim() }, step:0, freeStart:!!v.trim() };
-  go('quiz');
+  const key=routeFreeText(v);
+  if(key){ buildFromLeaf(key, null, v.trim()); }
+  else { QUIZ={ node:'root', answers:{ freeText:v.trim() } }; go('quiz'); if(v.trim()) toast('Précise ci-dessous, je t\u2019oriente'); }
 }
-function startNew(){ QUIZ={ answers:{}, step:0 }; go('quiz'); }
+function startNew(){ QUIZ={ node:'root', answers:{} }; go('quiz'); }
 function loadDemo(){
   const wf=buildWorkflow('kawaii', {priority:'balance', owned:STORE.data.prefs.owned});
-  const p={ id:uid(), name:'Mon application Kawaii', templateKey:'kawaii', workflow:wf, memory:['Identité visuelle : pastel, contours doux'], currentStep:0, status:'active', createdAt:Date.now(), updatedAt:Date.now() };
+  const p={ id:uid(), name:'Mon application Kawaii', templateKey:'kawaii', workflow:wf, memory:['Identité visuelle : pastel, contours doux'], currentStep:0, status:'active', framing:'new', createdAt:Date.now(), updatedAt:Date.now() };
   STORE.upsertProject(p); go('cockpit',{id:p.id});
 }
 
-/* ---------- QUESTIONNAIRE (conditionnel, progressif) ---------- */
-function quizQuestions(){
-  // Questions générées dynamiquement selon les réponses déjà données
-  const a=QUIZ.answers;
-  const qs=[];
-  qs.push({ key:'create', q:'Que veux-tu créer&nbsp;?', help:'On part de ton besoin, pas du nom d\u2019une IA.',
-    type:'single', options:['Application','Site web','Image','Vidéo','Présentation','Analyse de données','Recherche','Marketing','Automatisation','Autre'] });
-  if(a.create==='Application') qs.push({ key:'appType', q:'Quel type d\u2019application&nbsp;?', type:'single',
-    options:['Web / PWA','Mobile','Prototype / MVP','Application complète'] });
-  qs.push({ key:'level', q:'Quel est ton niveau avec les IA&nbsp;?', help:'Ça ajuste le niveau d\u2019accompagnement.',
-    type:'single', options:['Débutant','Intermédiaire','Avancé','Expert'] });
-  qs.push({ key:'priority', q:'Ta priorité principale&nbsp;?', help:'Une IA n\u2019est pas "meilleure" dans l\u2019absolu — mais meilleure pour toi, ici.',
-    type:'single', options:PRIORITIES.map(p=>p.label) });
-  qs.push({ key:'owned', q:'Utilises-tu déjà certains outils&nbsp;?', help:'Je ne te ferai pas changer d\u2019outil sans raison.',
-    type:'multi', options:AI_TOOLS.slice(0,10).map(t=>t.name) });
-  return qs;
+/* ---------- ARBRE D'INTENTION (au clic) : de « que veux-tu faire ? » jusqu'au besoin précis ----------
+   Chaque option est soit une BRANCHE (go: nœud suivant), soit une FEUILLE (leaf: clé de template).
+   Une feuille peut viser un besoin SIMPLE (template 1 étape = 1 IA + 1 prompt) ou un PARCOURS. */
+const INTENTS = {
+  root:{ q:'Que veux-tu faire&nbsp;?', help:'Choisis, et je t\u2019amène droit au but : la bonne IA + le prompt (ou un parcours si le besoin l\u2019exige).', options:[
+    {label:'Apprendre quelque chose', desc:'une langue, un outil, un concept', icon:'book', go:'apprendre'},
+    {label:'Créer / concevoir', desc:'app, site, image, vidéo, présentation…', icon:'grid', go:'creer'},
+    {label:'Rédiger un texte', desc:'email, article, traduction…', icon:'target', go:'rediger'},
+    {label:'Analyser un document / des données', desc:'fichier, tableau, PDF', icon:'search', leaf:'data'},
+    {label:'Rechercher / me documenter', desc:'trouver des infos fiables et sourcées', icon:'search', leaf:'recherche'},
+    {label:'Automatiser une tâche', desc:'gagner du temps sur du répétitif', icon:'relay', leaf:'automatisation'}
+  ]},
+  apprendre:{ q:'Apprendre quoi&nbsp;?', back:'root', options:[
+    {label:'Une langue', desc:'anglais, arabe, espagnol…', icon:'book', leaf:'apprendre-langue'},
+    {label:'Un outil', desc:'Excel, Word, Power BI, Photoshop…', icon:'book', leaf:'apprendre-outil'},
+    {label:'Un concept / une compétence', desc:'comprendre un sujet', icon:'book', leaf:'apprendre-concept'},
+    {label:'Utiliser l\u2019IA elle-même', desc:'bien démarrer avec l\u2019IA', icon:'book', leaf:'apprendre-ia'}
+  ]},
+  creer:{ q:'Créer quoi&nbsp;?', back:'root', options:[
+    {label:'Une application', desc:'web, mobile, MVP', icon:'grid', leaf:'application'},
+    {label:'Une app de personnages Kawaii', desc:'la démo complète', icon:'star', leaf:'kawaii'},
+    {label:'Un site web', desc:'vitrine, contenu, SEO', icon:'grid', leaf:'site'},
+    {label:'Une image / un visuel', desc:'logo, illustration', icon:'grid', leaf:'image'},
+    {label:'Une vidéo', desc:'script, visuels, voix', icon:'grid', leaf:'video'},
+    {label:'Une présentation', desc:'slides pro', icon:'grid', leaf:'presentation'},
+    {label:'Un template / document pro', desc:'CV, facture, compte-rendu…', icon:'grid', leaf:'template-pro'}
+  ]},
+  rediger:{ q:'Rédiger quoi&nbsp;?', back:'root', options:[
+    {label:'Un email', desc:'message clair, prêt à envoyer', icon:'target', leaf:'rediger-email'},
+    {label:'Un texte / article', desc:'contenu structuré', icon:'target', leaf:'rediger-texte'},
+    {label:'Traduire un texte', desc:'en gardant le ton', icon:'target', leaf:'traduire'},
+    {label:'Une campagne marketing', desc:'cible, messages, visuels', icon:'target', leaf:'marketing'}
+  ]}
+};
+
+/* Routage best-effort du texte libre → clé de template (sans IA, par mots-clés). */
+function routeFreeText(text){
+  const s=(text||'').toLowerCase();
+  if(!s.trim()) return null;
+  const has=(...w)=>w.some(x=>s.includes(x));
+  if(has('apprend','apprendre','cours','leçon','lecon','réviser','reviser','maîtriser','maitriser')){
+    if(has('anglais','espagnol','arabe','allemand','italien','chinois','langue','portugais','russe','japonais')) return 'apprendre-langue';
+    if(has('excel','word','power bi','powerbi','powerpoint','photoshop','outil','logiciel','canva')) return 'apprendre-outil';
+    if(has('ia','chatgpt','prompt','intelligence artificielle')) return 'apprendre-ia';
+    return 'apprendre-concept';
+  }
+  if(has('traduir','traduction')) return 'traduire';
+  if(has('email','e-mail','mail','courriel')) return 'rediger-email';
+  if(has('template','modèle','modele','cv','facture','compte-rendu','compte rendu','proposition','contrat','document')) return 'template-pro';
+  if(has('vidéo','video','clip','film')) return 'video';
+  if(has('image','logo','visuel','illustration','dessin','photo')) return 'image';
+  if(has('présentation','presentation','slides','diapo','powerpoint','deck')) return 'presentation';
+  if(has('site','web','landing','page web')) return 'site';
+  if(has('appli','application',' app')) return 'application';
+  if(has('analys','données','donnees','data','tableau','fichier','statisti')) return 'data';
+  if(has('recherch','documenter','sources','veille')) return 'recherche';
+  if(has('automat','répétit','repetit','workflow','zapier','make')) return 'automatisation';
+  if(has('marketing','campagne','pub','tiktok','instagram','réseaux','reseaux')) return 'marketing';
+  if(has('rédig','redig','écri','ecri','texte','article')) return 'rediger-texte';
+  return null;
 }
+
+/* ---------- Vue arbre d'intention (rendue par le routeur 'quiz') ---------- */
 function quizView(){
-  const qs=quizQuestions();
-  const idx=Math.min(QUIZ.step, qs.length-1);
-  const q=qs[idx];
-  const pct=Math.round(((idx)/(qs.length))*100);
-  const a=QUIZ.answers;
-  const sel=a[q.key];
-  const optsHtml=q.options.map(o=>{
-    const on = q.type==='multi' ? (Array.isArray(sel)&&sel.includes(o)) : sel===o;
-    return `<button class="opt ${q.type==='multi'?'multi':''} ${on?'selected':''}" onclick="pickOpt('${q.key}','${escq(o)}','${q.type}')">
-      <span class="o-check">${on?ICONS.check:''}</span><span>${o}</span></button>`;
-  }).join('');
-  const freeBlock = idx===0 ? `<div class="freeform" style="margin-top:18px">
-      <div class="field"><div class="f-label">Ou décris ton besoin librement</div>
-      <textarea id="freeText" placeholder="Ex : je veux automatiser l\u2019envoi de mes factures…">${esc(a.freeText||'')}</textarea></div></div>` : '';
+  const node=INTENTS[QUIZ.node||'root']||INTENTS.root;
+  const optsHtml=node.options.map((o,idx)=>`
+    <button class="mode" style="width:100%" onclick="intentPick(${idx})">
+      <div class="m-ico">${ICONS[o.icon]||ICONS.target}</div>
+      <h3>${o.label}</h3>${o.desc?`<p>${o.desc}</p>`:''}
+    </button>`).join('');
+  const freeBlock = (QUIZ.node==='root'||!QUIZ.node) ? `
+    <div class="freeform" style="margin-top:22px">
+      <div class="field"><div class="f-label">Ou décris ton besoin en une phrase</div>
+      <div style="display:flex;gap:8px">
+        <input id="freeText" placeholder="Ex : je veux apprendre l\u2019anglais…" value="${esc((QUIZ.answers&&QUIZ.answers.freeText)||'')}" style="flex:1;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;font-family:inherit;font-size:15px" onkeydown="if(event.key==='Enter')freeTextGo()"/>
+        <button class="btn gold" onclick="freeTextGo()">Trouver</button></div></div></div>` : '';
   return `<div class="container quiz-wrap"><div class="quiz">
-    <div class="quiz-progress"><div class="bar" style="width:${pct}%"></div></div>
-    <div class="quiz-step-num">Question ${idx+1} sur ${qs.length}</div>
-    <h2>${q.q}</h2>${q.help?`<p class="q-help">${q.help}</p>`:''}
-    <div class="opts">${optsHtml}</div>
+    <div class="quiz-step-num">${node.back?'Précise ton besoin':'Étape 1'}</div>
+    <h2>${node.q}</h2>${node.help?`<p class="q-help">${node.help}</p>`:''}
+    <div class="modes" style="grid-template-columns:1fr 1fr">${optsHtml}</div>
     ${freeBlock}
-    <div class="quiz-nav">
-      <button class="btn ghost" onclick="quizBack()">${idx===0?'Annuler':'Précédent'}</button>
-      <button class="btn ${canNext(q)?'gold':''}" ${canNext(q)?'':'disabled'} onclick="quizNext()">${idx>=qs.length-1?'Voir mon parcours':'Continuer'}</button>
+    <div class="quiz-nav" style="margin-top:24px">
+      <button class="btn ghost" onclick="intentBack()">${ICONS.back} ${node.back?'Retour':'Accueil'}</button>
     </div>
   </div></div>`;
 }
-function canNext(q){ const a=QUIZ.answers; if(q.type==='multi') return true; return !!a[q.key] || (q.key==='create'&&a.freeText); }
-function pickOpt(key,val,type){
-  val=unescq(val); const a=QUIZ.answers;
-  if(type==='multi'){ a[key]=a[key]||[]; const i=a[key].indexOf(val); if(i>=0)a[key].splice(i,1); else a[key].push(val); }
-  else a[key]=val;
-  render();
+function intentPick(idx){
+  const node=INTENTS[QUIZ.node||'root']||INTENTS.root; const o=node.options[idx];
+  if(o.go){ QUIZ.node=o.go; render(); }
+  else if(o.leaf){ buildFromLeaf(o.leaf, o.label); }
 }
-function quizBack(){ if(QUIZ.step===0){ go('home'); } else { QUIZ.step--; render(); } }
-function quizNext(){
-  const qs=quizQuestions();
-  if(QUIZ.step===0){ const ft=document.getElementById('freeText'); if(ft) QUIZ.answers.freeText=ft.value; }
-  if(QUIZ.step>=qs.length-1){ buildFromQuiz(); return; }
-  QUIZ.step++; render();
+function intentBack(){
+  const node=INTENTS[QUIZ.node||'root']||INTENTS.root;
+  if(node.back){ QUIZ.node=node.back; render(); } else { go('home'); }
 }
-function buildFromQuiz(){
-  const a=QUIZ.answers;
-  const templateKey = GOAL_TO_TEMPLATE[a.create] || 'application';
-  const priority = (PRIORITIES.find(p=>p.label===a.priority)||{}).id || 'balance';
-  const ownedIds = (a.owned||[]).map(n=>(AI_TOOLS.find(t=>t.name===n)||{}).id).filter(Boolean);
-  STORE.data.prefs={ owned:ownedIds, level:a.level||'Débutant' }; STORE.save();
-  const wf=buildWorkflow(templateKey, {priority, owned:ownedIds});
-  const name = a.freeText ? capitalize(a.freeText.slice(0,60)) : (WORKFLOW_TEMPLATES[templateKey]||{}).label || 'Mon projet';
-  QUIZ._draft={ id:uid(), name, templateKey, workflow:wf, memory:[], currentStep:0, status:'draft', priority, createdAt:Date.now(), updatedAt:Date.now() };
+function freeTextGo(){
+  const v=(document.getElementById('freeText')||{}).value||'';
+  QUIZ.answers=QUIZ.answers||{}; QUIZ.answers.freeText=v.trim();
+  const key=routeFreeText(v);
+  if(key) buildFromLeaf(key, null, v.trim());
+  else toast('Choisis une catégorie ci-dessus pour préciser');
+}
+/* Construit le projet (parcours OU besoin simple) depuis une feuille de l'arbre */
+function buildFromLeaf(key, label, nameOverride){
+  const owned=STORE.data.prefs.owned||[];
+  const wf=buildWorkflow(key, {priority:'balance', owned});
+  const name = nameOverride ? capitalize(nameOverride.slice(0,60))
+             : (label || (WORKFLOW_TEMPLATES[key]||{}).label || 'Mon projet');
+  QUIZ._draft={ id:uid(), name, templateKey:key, workflow:wf, memory:[], currentStep:0, status:'draft', priority:'balance', framing:'new', createdAt:Date.now(), updatedAt:Date.now() };
   go('plan');
 }
 
@@ -1150,14 +1243,15 @@ function planView(){
         ${altChips?`<div class="alts">${altChips}</div>`:''}
       </div></div>`;
   }).join('');
+  const simple = p.workflow.steps.length===1;
   return `<div class="container plan-wrap">
-    <div class="plan-head"><h2>Voici ton parcours recommandé</h2>
-      <p>${p.workflow.steps.length} étapes · chaque IA est choisie pour <b>cette étape</b> et pour <b>ton profil</b>, pas dans l\u2019absolu.</p></div>
-    <div class="hb">${ICONS.help} Tu gardes la main : change une IA, vois les alternatives, ou ajuste avant de lancer.</div>
+    <div class="plan-head"><h2>${simple?'Voici l\u2019IA recommandée pour ton besoin':'Voici ton parcours recommandé'}</h2>
+      <p>${simple?'Une seule IA suffit ici. On te prépare le prompt — tu pourras le personnaliser juste après.':(p.workflow.steps.length+' étapes · chaque IA est choisie pour <b>cette étape</b> et pour <b>ton profil</b>, pas dans l\u2019absolu.')}</p></div>
+    <div class="hb">${ICONS.help} Tu gardes la main : change d\u2019IA, vois les alternatives, ou ajuste avant de lancer.</div>
     ${stepsHtml}
     <div class="quiz-nav" style="margin-top:26px">
-      <button class="btn ghost" onclick="go('quiz')">${ICONS.back} Ajuster mes réponses</button>
-      <button class="btn gold" onclick="confirmPlan()">Lancer ce parcours ${ICONS.relay}</button>
+      <button class="btn ghost" onclick="startNew()">${ICONS.back} Changer de besoin</button>
+      <button class="btn gold" onclick="confirmPlan()">${simple?'Commencer':'Lancer ce parcours'} ${ICONS.relay}</button>
     </div>
   </div>`;
 }
