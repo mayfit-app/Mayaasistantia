@@ -841,6 +841,14 @@ function copyPrompt(id,i){
   if(v!=null){ step.promptEdited=v; STORE.upsertProject(p); }
   copy(assemblePrompt(p, step, v), LANG==='en'?'Prompt copied (framing + format included)':'Prompt copié (cadrage + format inclus)');
 }
+function copyAndOpen(id,i,url,name){
+  const p=STORE.getProject(id); const step=p.workflow.steps[i]; const v=currentPromptValue();
+  if(v!=null){ step.promptEdited=v; STORE.upsertProject(p); }
+  const text=assemblePrompt(p, step, v);
+  try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(e){}
+  window.open(url,'_blank','noopener');
+  toast((LANG==='en'?'Prompt copied — paste it (Ctrl/Cmd+V) into ':'Prompt copié — colle-le (Ctrl/Cmd+V) dans ')+(name||'l\u2019IA'));
+}
 
 /* ---------- i18n FR/EN (ossature ; appliquée après le rendu, 0 régression sur le FR) ---------- */
 let LANG = localStorage.getItem('aigps_lang') || 'fr';
@@ -1204,6 +1212,8 @@ function missionCard(p, step, i){
         <div style="font-size:12.5px;color:var(--ink-soft)">${step.why}</div></div>
         <button class="btn sm" onclick="openReplace('${p.id}',${i})">${ICONS.swap} Changer</button></div>`:''}
 
+      ${i>0?`<div class="hb" style="margin:6px 0 0">${ICONS.relay} Le résultat de l\u2019étape précédente est transmis automatiquement à cette étape.</div>`:''}
+
       <div class="field"><div class="f-label">Ce dont l\u2019IA a besoin (entrées)</div>
         <ul>${step.inputs.map(x=>`<li>${x}</li>`).join('')}</ul></div>
 
@@ -1215,21 +1225,25 @@ function missionCard(p, step, i){
 
       <div class="field"><div class="f-label">2 · Prompt préparé — modifiable, écris ton projet dedans</div>
         <textarea class="result-input" id="promptInput" style="min-height:150px">${esc(step.promptEdited!=null?step.promptEdited:step.prompt)}</textarea>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center">
-          <button class="btn sm gold" onclick="copyPrompt('${p.id}',${i})">${ICONS.copy} Copier le prompt ${badge('manual','Manuel')}</button>
-          ${t?`<a class="btn sm" href="${t.url}" target="_blank" rel="noopener" onclick="rememberPromptEdit('${p.id}',${i})">${ICONS.ext} Ouvrir ${t.name}</a>`:''}
+        <div style="margin-top:10px">
+          <button class="btn gold" id="runBtn" onclick="runStep('${p.id}',${i})">${ICONS.relay} Générer la réponse dans l\u2019app ${badge('connected','Auto')}</button>
+          <span style="font-size:12px;color:var(--ink-faint);margin-left:8px">L\u2019IA répond ici même, sans quitter l\u2019application.</span>
         </div>
-        <div style="font-size:11.5px;color:var(--ink-faint);margin-top:7px">Au copier / à l\u2019exécution, on ajoute automatiquement : le cadrage choisi ci-dessus + une consigne « réponse structurée, prête à copier-coller ».</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center;padding-top:12px;border-top:1px dashed var(--line)">
+          <span style="font-size:12px;color:var(--ink-soft);font-weight:600">Ou en manuel :</span>
+          <button class="btn sm" onclick="copyPrompt('${p.id}',${i})">${ICONS.copy} Copier le prompt</button>
+          ${t?`<button class="btn sm" onclick="copyAndOpen('${p.id}',${i},'${t.url}','${esc(t.name)}')">${ICONS.ext} Copier & ouvrir ${t.name}</button>`:''}
+        </div>
+        <div style="font-size:11.5px;color:var(--ink-faint);margin-top:7px">Le prompt inclut ton cadrage + une consigne de format. ${t?t.name:'L\u2019IA'} est un site externe : le prompt est copié automatiquement, colle-le avec Ctrl/Cmd+V.</div></div>
 
       <div class="field"><div class="f-label">Résultat attendu</div><div class="f-body">${step.expected}</div></div>
 
-      <div class="field"><div class="f-label">3 · Colle ici le retour de l\u2019IA</div>
+      <div class="field"><div class="f-label">3 · Réponse de l\u2019IA (ici même) — ou colle un retour manuel</div>
         <textarea class="result-input" id="resInput" placeholder="Colle la réponse de ${t?t.name:'l\u2019IA'} ici…">${esc(step.result||'')}</textarea>
         <div style="margin-top:8px"><button class="btn sm" onclick="saveResult('${p.id}',${i})">${ICONS.check} Enregistrer le résultat</button></div>
       </div>
 
       <div class="mission-actions">
-        <button class="btn primary" id="runBtn" onclick="runStep('${p.id}',${i})">${ICONS.relay} Exécuter avec l\u2019IA ${badge('connected','Auto')}</button>
         <button class="btn" onclick="openRelay('${p.id}',${i})">${ICONS.relay} Passer le relais</button>
         ${i>0?`<button class="btn ghost" onclick="gotoStep('${p.id}',${i-1})">${ICONS.back} Étape précédente</button>`:''}
         <button class="btn gold" style="margin-left:auto" onclick="completeStep('${p.id}',${i})">${ICONS.check} ${isLast?'Terminer le projet':'Valider & étape suivante'}</button>
