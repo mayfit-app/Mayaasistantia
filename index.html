@@ -971,6 +971,8 @@ function applyI18n(){
   });
 }
 
+/* ============================ 4. UI ============================ */
+const app = document.getElementById('app');
 let VIEW = {name:'home', params:{}};
 // État transitoire du questionnaire
 let QUIZ = null;
@@ -1051,8 +1053,8 @@ function topbar(){
 }
 function footer(){
   return `<footer class="footer"><div class="container footer-in">
-    <div class="honesty">${badge('manual','Relais manuel & assisté')} <span>V1 sans API — aucune IA n\u2019est appelée automatiquement.</span></div>
-    <div>AI GPS · le GPS des intelligences artificielles</div>
+    <div class="honesty">${badge('connected','Mode connecté prêt')} <span>L\u2019IA répond dans l\u2019app via ta clé — sinon, relais manuel.</span></div>
+    <div>AI GPS · v6.0</div>
   </div></footer>`;
 }
 function badge(cls,label){ return `<span class="badge ${cls}">${label}</span>`; }
@@ -1218,6 +1220,7 @@ function freeTextGo(){
 }
 /* Construit le projet (parcours OU besoin simple) depuis une feuille de l'arbre */
 function buildFromLeaf(key, label, nameOverride){
+  if(!QUIZ) QUIZ={};
   const owned=STORE.data.prefs.owned||[];
   const wf=buildWorkflow(key, {priority:'balance', owned});
   const name = nameOverride ? capitalize(nameOverride.slice(0,60))
